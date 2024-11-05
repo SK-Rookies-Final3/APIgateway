@@ -26,7 +26,7 @@ public class GatewayConfiguration {
                         .uri("lb://USERS")
                 )
                 .route("user-service-2", predicateSpec -> predicateSpec
-                        .path("/api/product/**")
+                        .path("/api/product/**git ")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .removeRequestHeader(HttpHeaders.COOKIE)
                                 .filter(jwtAuthorizationFilter)
