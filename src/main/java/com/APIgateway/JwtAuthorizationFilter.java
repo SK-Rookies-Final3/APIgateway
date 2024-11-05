@@ -44,34 +44,31 @@ public class JwtAuthorizationFilter implements GatewayFilter {
 
     private SecretKey secretKey;  // JWT 서명 검증에 사용할 SecretKey
 
-    @Value("${auth.jwt.requiredRole:}")
-    private String requiredRole;  // 필수 역할 (빈 값이면 모든 역할 허용)
-
     // @PostConstruct는 빈 초기화 메서드로, 필터가 생성된 후 비밀 키를 초기화합니다.
     @PostConstruct
     public void init() {
         this.secretKey = Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8));  // JWT 서명 검증 키 초기화
     }
 
-    // 필터 메서드: 클라이언트 요청을 처리하고 JWT 토큰 인증을 검증합니다.
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         try {
             List<String> authorizations = getAuthorizations(exchange);  // Authorization 헤더 추출
 
-            // 인증 헤더가 없다면 에러 응답 반환
             if (isAuthorizationHeaderMissing(authorizations)) {
                 return sendErrorResponse(exchange, ERROR_NO_AUTH, new NotExistsAuthorization());
             }
 
             String jwtToken = parseAuthorizationToken(authorizations.get(0));  // Bearer 토큰 추출
-
-            // JWT 유효성 검사 및 역할 검증
             Claims claims = parseAndValidateJwt(jwtToken);
 
-            // JWT에서 사용자 역할을 추출하고 유효성 검사
+            // JWT에서 사용자 역할을 추출하고 요청에 필요한 역할을 확인
             String userRole = claims.get("roles", String.class);
-            if (!isRoleValid(userRole)) {
+
+            // 라우트에서 요구하는 역할이 있다면 이를 확인
+            String requiredRole = exchange.getRequest().getHeaders().getFirst("X-Required-Role");
+
+            if (requiredRole != null && !isRoleValid(userRole, requiredRole)) {
                 return sendErrorResponse(exchange, HttpStatus.FORBIDDEN.value(),
                         new UnauthorizedAccessException("User does not have the required role"));
             }
@@ -80,9 +77,14 @@ public class JwtAuthorizationFilter implements GatewayFilter {
             exchange.getRequest().mutate().header("X-Gateway-Header", claims.getSubject());
             return chain.filter(exchange);  // 다음 필터로 요청을 전달
         } catch (Exception e) {
-            // 예외가 발생하면 에러 응답 반환
             return sendErrorResponse(exchange, getErrorCode(e), e);
         }
+    }
+
+    private boolean isRoleValid(String userRole, String requiredRole) {
+        // 역할이 여러 개일 경우, 콤마로 구분된 역할 리스트와 비교
+        List<String> validRoles = List.of(requiredRole.split(","));
+        return validRoles.contains(userRole);  // 사용자 역할이 유효한지 체크
     }
 
     // JWT 토큰을 파싱하고 유효성을 검증하는 메서드
@@ -108,16 +110,6 @@ public class JwtAuthorizationFilter implements GatewayFilter {
             throw new AccessTokenExpiredException();  // 토큰 만료 예외 발생
         }
     }
-
-    // 사용자 역할이 유효한지 확인하는 메서드
-    private boolean isRoleValid(String userRole) {
-        if (requiredRole == null || requiredRole.isEmpty()) {
-            throw new UnauthorizedAccessException("Role is required but not specified.");
-        }
-        List<String> validRoles = List.of(requiredRole.split(","));
-        return validRoles.contains(userRole);  // 사용자 역할이 유효한지 체크
-    }
-
 
     // 예외 타입에 따라 적절한 에러 코드 반환
     private int getErrorCode(Exception e) {

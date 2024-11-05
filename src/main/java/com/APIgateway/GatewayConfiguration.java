@@ -25,40 +25,39 @@ public class GatewayConfiguration {
                         )
                         .uri("lb://USERS")
                 )
-                .route("product-service", predicateSpec -> predicateSpec
-                        .path("/api/product/**")
-                        .filters(gatewayFilterSpec -> gatewayFilterSpec
-                                .removeRequestHeader(HttpHeaders.COOKIE)
-                                .filter(jwtAuthorizationFilter) // 이미 생성된 JwtAuthorizationFilter 필터 사용
-                        )
-                        .uri("lb://BRAND")
-                )
-                .route("main-service", predicateSpec -> predicateSpec
-                        .path("/api/**")
-                        .filters(gatewayFilterSpec -> gatewayFilterSpec
-                                .removeRequestHeader(HttpHeaders.COOKIE)
-                                .filter(jwtAuthorizationFilter) // 이미 생성된 JwtAuthorizationFilter 필터 사용
-                        )
-                        .uri("lb://BRAND")
-                )
-                .route("client-service", predicateSpec -> predicateSpec
-                        .path("/client/**")
-                        .filters(gatewayFilterSpec -> gatewayFilterSpec
-                                .filter(new JwtAuthorizationFilter("client")) // "client" 역할을 위한 필터
-                        )
-                        .uri("lb://BRAND")
-                )
-                .route("master-service", predicateSpec -> predicateSpec
+                .route("user-service-2", predicateSpec -> predicateSpec
                         .path("/master/**")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
-                                .filter(new JwtAuthorizationFilter("master")) // "master" 역할을 위한 필터
+                                .removeRequestHeader(HttpHeaders.COOKIE)
+                                .filter(jwtAuthorizationFilter)
+                                .addRequestHeader("X-Required-Role", "master")
                         )
                         .uri("lb://USERS")
                 )
-                .route("owner-service", predicateSpec -> predicateSpec
+                .route("user-service-2", predicateSpec -> predicateSpec
+                        .path("/api/wishlist/**")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .removeRequestHeader(HttpHeaders.COOKIE)
+                                .filter(jwtAuthorizationFilter)
+                                .addRequestHeader("X-Required-Role", "client")
+                        )
+                        .uri("lb://WISHLIST")
+                )
+                .route("user-service-2", predicateSpec -> predicateSpec
+                        .path("/user/**")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .removeRequestHeader(HttpHeaders.COOKIE)
+                                .filter(jwtAuthorizationFilter)
+                                .addRequestHeader("X-Required-Role", "client")
+                        )
+                        .uri("lb://USERS")
+                )
+                .route("main-service", predicateSpec -> predicateSpec
                         .path("/owner/**")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
-                                .filter(new JwtAuthorizationFilter("owner")) // "owner" 역할을 위한 필터
+                                .removeRequestHeader(HttpHeaders.COOKIE)
+                                .filter(jwtAuthorizationFilter)
+                                .addRequestHeader("X-Required-Role", "owner")
                         )
                         .uri("lb://BRAND")
                 )
