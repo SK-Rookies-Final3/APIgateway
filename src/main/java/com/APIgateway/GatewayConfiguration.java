@@ -18,18 +18,18 @@ public class GatewayConfiguration {
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route("user-service-1", predicateSpec -> predicateSpec
-                        .path("/", "/login")
+                        .path("/register", "/login")
                         .and().method(HttpMethod.POST)
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .removeRequestHeader(HttpHeaders.COOKIE)
                         )
                         .uri("lb://USERS")
                 )
-                .route("user-service-2", predicateSpec -> predicateSpec
-                        .path("/api/product/**git ")
+                .route("product-service", predicateSpec -> predicateSpec
+                        .path("/api/product/**")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .removeRequestHeader(HttpHeaders.COOKIE)
-                                .filter(jwtAuthorizationFilter)
+                                .filter(jwtAuthorizationFilter) // 이미 생성된 JwtAuthorizationFilter 필터 사용
                         )
                         .uri("lb://BRAND")
                 )
@@ -37,7 +37,28 @@ public class GatewayConfiguration {
                         .path("/api/**")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .removeRequestHeader(HttpHeaders.COOKIE)
-                                .filter(jwtAuthorizationFilter)
+                                .filter(jwtAuthorizationFilter) // 이미 생성된 JwtAuthorizationFilter 필터 사용
+                        )
+                        .uri("lb://BRAND")
+                )
+                .route("client-service", predicateSpec -> predicateSpec
+                        .path("/client/**")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(new JwtAuthorizationFilter("client")) // "client" 역할을 위한 필터
+                        )
+                        .uri("lb://BRAND")
+                )
+                .route("master-service", predicateSpec -> predicateSpec
+                        .path("/master/**")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(new JwtAuthorizationFilter("master")) // "master" 역할을 위한 필터
+                        )
+                        .uri("lb://USERS")
+                )
+                .route("owner-service", predicateSpec -> predicateSpec
+                        .path("/owner/**")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(new JwtAuthorizationFilter("owner")) // "owner" 역할을 위한 필터
                         )
                         .uri("lb://BRAND")
                 )

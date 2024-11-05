@@ -114,8 +114,10 @@ public class JwtAuthorizationFilter implements GatewayFilter {
         if (requiredRole == null || requiredRole.isEmpty()) {
             throw new UnauthorizedAccessException("Role is required but not specified.");
         }
-        return requiredRole.equalsIgnoreCase(userRole);  // 사용자 역할이 필수 역할과 일치하는지 확인
+        List<String> validRoles = List.of(requiredRole.split(","));
+        return validRoles.contains(userRole);  // 사용자 역할이 유효한지 체크
     }
+
 
     // 예외 타입에 따라 적절한 에러 코드 반환
     private int getErrorCode(Exception e) {
