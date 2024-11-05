@@ -32,122 +32,130 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class JwtAuthorizationFilter implements GatewayFilter {
 
-    @Value("${auth.jwt.key}") // 애플리케이션 속성에서 JWT 비밀 키를 주입
+    // JWT 비밀 키를 application.properties 파일에서 주입
+    @Value("${auth.jwt.key}")
     private String key;
 
-    private final ObjectMapper objectMapper; // JSON 직렬화를 위한 Jackson 객체 매퍼
+    // ObjectMapper는 오류 응답을 JSON 형식으로 직렬화하기 위해 사용
+    private final ObjectMapper objectMapper;
 
-    private static final String AUTH_TYPE = "Bearer "; // Bearer 토큰의 접두사
-    private static final int ERROR_NO_AUTH = 701; // 인증 헤더 없음에 대한 에러 코드
-    private static final int ERROR_TOKEN_EXPIRED = 702; // 토큰 만료에 대한 에러 코드
-    private static final int ERROR_UNKNOWN = 999; // 일반 에러 코드
+    // 오류 코드 상수들 (인증 오류, 토큰 만료, 기타 예외 처리)
+    private static final int ERROR_NO_AUTH = 701;
+    private static final int ERROR_TOKEN_EXPIRED = 702;
+    private static final int ERROR_UNKNOWN = 999;
 
+    // SecretKey 객체를 클래스 레벨에서 한 번만 생성하여 재사용
+    private SecretKey secretKey = Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8));
+
+    // 요청을 필터링하는 메소드. 요청에 JWT가 포함된 인증 헤더가 있는지 확인하고, 유효성을 검사함.
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        log.info("JwtAuthorizationFilter begin"); // 필터 시작 로그
         try {
-            // 요청에서 Authorization 헤더를 가져옴
+            // 요청에서 인증 헤더를 추출
             List<String> authorizations = getAuthorizations(exchange);
 
-            // Authorization 헤더가 존재하는지 확인
-            if (isNotExistsAuthorizationHeader(authorizations)) {
-                throw new NotExistsAuthorization(); // 없으면 사용자 정의 예외 던짐
+            // 인증 헤더가 없으면 인증 오류 응답 반환
+            if (isAuthorizationHeaderMissing(authorizations)) {
+                return sendErrorResponse(exchange, ERROR_NO_AUTH, new NotExistsAuthorization());
             }
 
-            // Authorization 헤더에서 Bearer 토큰을 찾음
-            String authorization = authorizations.stream()
-                    .filter(this::isBearerType) // Bearer 타입 필터링
-                    .findFirst()
-                    .orElseThrow(NotExistsAuthorization::new); // 없으면 예외 던짐
+            // JWT 토큰 추출
+            String jwtToken = parseAuthorizationToken(authorizations.get(0));
 
-            String jwtToken = parseAuthorizationToken(authorization); // JWT 토큰 파싱
-            validateJwtToken(jwtToken); // 토큰의 만료 검증
-            // 요청 헤더에 토큰의 주제를 추가하여 이후 처리에 사용
+            // JWT 유효성 검사 (만료된 토큰인지 체크)
+            validateJwtToken(jwtToken);
+
+            // JWT가 유효하면 요청 헤더에 사용자 정보를 추가하여 다음 필터로 전달
             exchange.getRequest().mutate().header("X-Gateway-Header", getSubjectOf(jwtToken));
-
-            return chain.filter(exchange); // 필터 체인을 계속 진행
-        } catch (NotExistsAuthorization e1) {
-            return sendErrorResponse(exchange, ERROR_NO_AUTH, e1); // 인증 헤더 없음 처리
-        } catch (AccessTokenExpiredException e2) {
-            return sendErrorResponse(exchange, ERROR_TOKEN_EXPIRED, e2); // 만료된 토큰 처리
-        } catch (Exception e3) {
-            return sendErrorResponse(exchange, ERROR_UNKNOWN, e3); // 기타 예외 처리
+            return chain.filter(exchange);
+        } catch (NotExistsAuthorization | AccessTokenExpiredException e) {
+            // 인증이 없거나 토큰이 만료된 경우 적절한 오류 응답 반환
+            return sendErrorResponse(exchange, e instanceof NotExistsAuthorization ? ERROR_NO_AUTH : ERROR_TOKEN_EXPIRED, e);
+        } catch (Exception e) {
+            // 기타 예기치 않은 오류 처리
+            return sendErrorResponse(exchange, ERROR_UNKNOWN, e);
         }
     }
 
+    // JWT 토큰 유효성 검증 (만료 여부 체크)
     private void validateJwtToken(String jwtToken) {
-        Claims claims = parseJwt(jwtToken); // JWT에서 클레임 추출
-        Date expiration = claims.getExpiration(); // 만료 날짜 가져오기
+        Claims claims = parseJwt(jwtToken);
+        Date expiration = claims.getExpiration();
         if (expiration.before(new Date())) {
-            throw new AccessTokenExpiredException(); // 만료되면 예외 던짐
+            throw new AccessTokenExpiredException(); // 만료된 토큰 예외 발생
         }
     }
 
+    // 오류 발생 시 JSON 형식으로 오류 응답을 반환하는 메소드
     private Mono<Void> sendErrorResponse(ServerWebExchange exchange, int errorCode, Exception e) {
         try {
-            // 에러 코드와 메시지를 포함한 에러 응답 생성
-            ErrorResponse errorResponse = new ErrorResponse(errorCode, e.getMessage());
-            String errorBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(errorResponse); // JSON으로 변환
+            // 오류 로그 기록
+            log.error("Error occurred: {} - {}", errorCode, e.getMessage());
 
+            // 오류 응답 객체 생성
+            ErrorResponse errorResponse = new ErrorResponse(errorCode, e.getMessage());
+            String errorBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(errorResponse);
+
+            // HTTP 응답 설정 (401 Unauthorized, JSON 형식)
             ServerHttpResponse response = exchange.getResponse();
-            response.setStatusCode(HttpStatus.UNAUTHORIZED); // HTTP 상태 설정
-            response.getHeaders().setContentType(MediaType.APPLICATION_JSON); // 콘텐츠 타입 설정
-            DataBuffer buffer = response.bufferFactory().wrap(errorBody.getBytes(StandardCharsets.UTF_8)); // 응답 본문 준비
-            return response.writeWith(Flux.just(buffer)); // 응답 작성 및 반환
+            response.setStatusCode(HttpStatus.UNAUTHORIZED);
+            response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+            DataBuffer buffer = response.bufferFactory().wrap(errorBody.getBytes(StandardCharsets.UTF_8));
+
+            // 오류 응답 반환
+            return response.writeWith(Flux.just(buffer));
         } catch (JsonProcessingException ex) {
-            throw new RuntimeException(ex); // JSON 처리 예외 발생 시
+            throw new RuntimeException("Failed to process error response", ex);
         }
     }
 
-    private boolean isBearerType(String authorization) {
-        return authorization.startsWith(AUTH_TYPE); // "Bearer "로 시작하는지 확인
-    }
-
+    // 요청에서 Authorization 헤더를 추출하는 메소드
     private List<String> getAuthorizations(ServerWebExchange exchange) {
         ServerHttpRequest request = exchange.getRequest();
-        List<String> authorizations = request.getHeaders().get(HttpHeaders.AUTHORIZATION); // Authorization 헤더 가져오기
-        return authorizations != null ? authorizations : List.of(); // 없으면 빈 리스트 반환
+        return request.getHeaders().getOrDefault(HttpHeaders.AUTHORIZATION, List.of());
     }
 
+    // Authorization 헤더에서 JWT 토큰을 추출하는 메소드
     private String parseAuthorizationToken(String authorization) {
-        return authorization.replace(AUTH_TYPE, "").trim(); // "Bearer "를 제거하고 토큰만 추출
+        if (authorization.startsWith("Bearer ")) {
+            return authorization.substring(7).trim(); // "Bearer " 이후의 부분을 추출
+        }
+        throw new IllegalArgumentException("Invalid Authorization header format");
     }
 
-    private boolean isNotExistsAuthorizationHeader(List<String> authorizations) {
-        return authorizations.isEmpty(); // 리스트가 비어있는지 확인
+    // Authorization 헤더가 존재하는지 확인하는 메소드
+    private boolean isAuthorizationHeaderMissing(List<String> authorizations) {
+        return authorizations.isEmpty();
     }
 
+    // JWT 토큰에서 subject (사용자 정보) 추출하는 메소드
     private String getSubjectOf(String jwtToken) {
-        return parseJwt(jwtToken).getSubject(); // 토큰 클레임에서 주제 가져오기
+        return parseJwt(jwtToken).getSubject();
     }
 
+    // JWT 토큰을 파싱하고 Claims 객체를 반환하는 메소드
     private Claims parseJwt(String jwtToken) {
-        SecretKey secretKey = secretKey(); // 파싱을 위한 비밀 키 가져오기
         return Jwts.parserBuilder()
-                .setSigningKey(secretKey) // 서명 키 설정
+                .setSigningKey(secretKey) // SecretKey로 서명 검증
                 .build()
                 .parseClaimsJws(jwtToken) // JWT 파싱
-                .getBody(); // 클레임 반환
+                .getBody();
     }
 
-    private SecretKey secretKey() {
-        return Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8)); // 제공된 키로 비밀 키 생성
-    }
-
-    // 인증 헤더가 없는 경우를 위한 사용자 정의 예외
+    // 인증 헤더가 없을 경우 발생하는 예외 클래스
     public static class NotExistsAuthorization extends RuntimeException {
         public NotExistsAuthorization() {
-            super("Authorization header is missing."); // 에러 메시지
+            super("Authorization header is missing.");
         }
     }
 
-    // 액세스 토큰이 만료된 경우를 위한 사용자 정의 예외
+    // 만료된 JWT 토큰에 대해 발생하는 예외 클래스
     public static class AccessTokenExpiredException extends RuntimeException {
         public AccessTokenExpiredException() {
-            super("Access token is expired."); // 에러 메시지
+            super("Access token is expired.");
         }
     }
 
-    // 에러 응답 구조를 나타내는 레코드
+    // 오류 응답 객체 (코드와 메시지를 포함)
     record ErrorResponse(int code, String message) {}
 }
