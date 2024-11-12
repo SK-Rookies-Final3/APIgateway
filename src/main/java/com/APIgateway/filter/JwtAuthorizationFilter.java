@@ -99,8 +99,10 @@ public class JwtAuthorizationFilter implements GatewayFilter {
     }
 
     private int getErrorCode(Exception e) {
+        log.debug("error:://"+e.toString());
         if (e instanceof NotExistsAuthorization) return ERROR_NO_AUTH;
         if (e instanceof AccessTokenExpiredException) return ERROR_TOKEN_EXPIRED;
+
         return ERROR_UNKNOWN;
     }
 

@@ -21,7 +21,6 @@ public class GatewayConfig {
                 .route("store-owner-register", predicateSpec -> predicateSpec
                         .path("/api/store/owner/register")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
-                                .removeRequestHeader(HttpHeaders.COOKIE) // COOKIE 헤더 제거
                                 .filter(jwtAuthorizationFilter)  // JwtAuthorizationFilter에서 토큰을 추출하여 헤더에 추가
                         )
                         .uri("lb://BRAND") // 서비스 이름으로 포워딩 (Eureka 서비스 레지스트리)
