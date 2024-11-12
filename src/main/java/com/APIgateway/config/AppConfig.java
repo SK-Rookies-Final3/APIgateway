@@ -1,4 +1,4 @@
-package com.APIgateway;
+package com.APIgateway.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
