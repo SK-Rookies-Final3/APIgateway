@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -64,11 +65,17 @@ public class JwtAuthorizationFilter implements GatewayFilter {
             // JWT에서 사용자 ID 추출 후 int로 변환
             int userId = Integer.parseInt(claims.getSubject()); // User ID를 int로 변환
 
-            // 사용자 ID를 요청 헤더에 추가
-            ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
-                    .header("X-User-Id", String.valueOf(userId))  // X-User-Id를 요청에 추가
-                    .build();
+            ServerHttpRequest modifiedRequest = new ServerHttpRequestDecorator(exchange.getRequest()) {
+                @Override
+                public HttpHeaders getHeaders() {
+                    HttpHeaders httpHeaders = new HttpHeaders();
+                    httpHeaders.add("X-User-Id", String.valueOf(userId));
+                    httpHeaders.putAll(super.getHeaders());
+                    return httpHeaders;
+                }
+            };
 
+            log.debug("Request URI to Eureka Server: " + exchange.getRequest().getURI());
             // 수정된 요청을 새로운 ServerWebExchange로 설정
             return chain.filter(exchange.mutate().request(modifiedRequest).build());
         } catch (Exception e) {
