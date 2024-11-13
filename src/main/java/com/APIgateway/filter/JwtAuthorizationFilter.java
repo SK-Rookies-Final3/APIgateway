@@ -33,22 +33,25 @@ import javax.annotation.PostConstruct;
 @Component
 public class JwtAuthorizationFilter implements GatewayFilter {
 
-    @Value("${auth.jwt.key}")
-    private String key;  // JWT 서명에 사용할 키
+    // JWT 서명키, users 서비스의 키와 똑같이 맞춰야 함
+    @Value("${JWT_SECRET}")
+    private String key;
 
-    private final ObjectMapper objectMapper;  // JSON 직렬화/역직렬화 도구
+    private final ObjectMapper objectMapper;
 
     private static final int ERROR_NO_AUTH = 701;  // 인증 헤더가 없을 경우의 에러 코드
     private static final int ERROR_TOKEN_EXPIRED = 702;  // 만료된 토큰에 대한 에러 코드
     private static final int ERROR_UNKNOWN = 999;  // 기타 오류에 대한 에러 코드
 
-    private SecretKey secretKey;  // JWT 서명 검증에 사용할 SecretKey
+    private SecretKey secretKey;
 
+    // JWT 서명 검증 키 초기화: 바이트 변환 안하면 토큰을 검증하는게 아니라 문자열로 검증하게 됨
     @PostConstruct
     public void init() {
-        this.secretKey = Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8));  // JWT 서명 검증 키 초기화
+        this.secretKey = Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8));
     }
 
+    // 메인 필터
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         try {
@@ -58,15 +61,20 @@ public class JwtAuthorizationFilter implements GatewayFilter {
                 return sendErrorResponse(exchange, ERROR_NO_AUTH, new NotExistsAuthorization());
             }
 
-            String jwtToken = parseAuthorizationToken(authorizations.get(0));  // Bearer 토큰 추출
-            Claims claims = parseAndValidateJwt(jwtToken);
+            String jwtToken = authorizations.get(0);  // 토큰 반환
+            Claims claims = parseAndValidateJwt(jwtToken); // 토큰 파싱 및 검증
 
-            // JWT에서 사용자 ID 추출 후 int로 변환
-            int userId = Integer.parseInt(claims.getSubject()); // User ID를 int로 변환
+            // 토큰에서 userId 추출
+            Integer userId = claims.get("id", Integer.class);
+
+            if (userId == null) {
+                return sendErrorResponse(exchange, ERROR_UNKNOWN, new UnauthorizedAccessException("User ID is missing in token"));
+            }
+
 
             // 사용자 ID를 요청 헤더에 추가
             ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
-                    .header("X-User-Id", String.valueOf(userId))  // X-User-Id를 요청에 추가
+                    .header("X-User-Id", String.valueOf(userId))
                     .build();
 
             // 수정된 요청을 새로운 ServerWebExchange로 설정
@@ -76,21 +84,28 @@ public class JwtAuthorizationFilter implements GatewayFilter {
         }
     }
 
-
+    // 토큰 파싱 및 검증
     private Claims parseAndValidateJwt(String jwtToken) {
         Claims claims = parseJwt(jwtToken);
         validateJwtToken(claims);
         return claims;
     }
 
+    // 토큰 파싱
     private Claims parseJwt(String jwtToken) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(jwtToken)
-                .getBody();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(jwtToken) // 서명 검증 및 디코딩
+                    .getBody();  // 바디(페이로드) 반환
+        } catch (Exception e) {
+            log.error("JWT parsing error", e);  // 예외 발생 시 로그
+            throw new UnauthorizedAccessException("Invalid token");
+        }
     }
 
+    // 시간 만료에 따른 토큰 검증
     private void validateJwtToken(Claims claims) {
         Date expiration = claims.getExpiration();
         if (expiration.before(new Date())) {
@@ -124,16 +139,15 @@ public class JwtAuthorizationFilter implements GatewayFilter {
         }
     }
 
+    // Authorization 헤더 가져오기
     private List<String> getAuthorizations(ServerWebExchange exchange) {
         ServerHttpRequest request = exchange.getRequest();
         return request.getHeaders().getOrDefault(HttpHeaders.AUTHORIZATION, List.of());
     }
 
     private String parseAuthorizationToken(String authorization) {
-        if (authorization.startsWith("Bearer ")) {
-            return authorization.substring(7).trim();
-        }
-        throw new IllegalArgumentException("Invalid Authorization header format");
+        // Bearer 없이 토큰을 바로 반환하도록 수정
+        return authorization.trim();
     }
 
     private boolean isAuthorizationHeaderMissing(List<String> authorizations) {

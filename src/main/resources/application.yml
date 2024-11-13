@@ -3,17 +3,18 @@ server:
 
 spring:
   application:
-    name: APIgateway
+    name: apigateway
 
 eureka:
   client:
     register-with-eureka: true  # Eureka 서버에 서비스 등록
     fetch-registry: true  # Eureka에서 다른 서비스 정보 조회
     service-url:
-      defaultZone: http://192.168.0.229:8088/eureka  # Eureka 서버 주소
+      defaultZone: http://192.168.0.71:8088/eureka  # Eureka 서버 주소
 
   instance:
-    instance-id: APIgateway:8089  # 고정 인스턴스 ID 설정
+    prefer-ip-address: true
+    instance-id: apigateway:apigateway:8089  # 고정 인스턴스 ID 설정
     lease-renewal-interval-in-seconds: 10  # 갱신 요청 간격 (초)
     lease-expiration-duration-in-seconds: 30  # 만료 시간 (초)
 
