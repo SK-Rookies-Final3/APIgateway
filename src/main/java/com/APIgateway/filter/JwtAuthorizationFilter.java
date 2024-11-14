@@ -62,8 +62,9 @@ public class JwtAuthorizationFilter implements GatewayFilter {
             String jwtToken = parseAuthorizationToken(authorizations.get(0));  // Bearer 토큰 추출
             Claims claims = parseAndValidateJwt(jwtToken);
 
+
             // JWT에서 사용자 ID 추출 후 int로 변환
-            int userId = Integer.parseInt(claims.getSubject()); // User ID를 int로 변환
+            String userId = claims.get("id").toString(); // User ID를 int로 변환
 
             ServerHttpRequest modifiedRequest = new ServerHttpRequestDecorator(exchange.getRequest()) {
                 @Override
@@ -137,11 +138,12 @@ public class JwtAuthorizationFilter implements GatewayFilter {
     }
 
     private String parseAuthorizationToken(String authorization) {
-        if (authorization.startsWith("Bearer ")) {
-            return authorization.substring(7).trim();
+        if (authorization != null && !authorization.isEmpty()) {
+            return authorization;
         }
         throw new IllegalArgumentException("Invalid Authorization header format");
     }
+
 
     private boolean isAuthorizationHeaderMissing(List<String> authorizations) {
         return authorizations.isEmpty();
