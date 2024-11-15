@@ -10,7 +10,7 @@ eureka:
     register-with-eureka: true  # Eureka 서버에 서비스 등록
     fetch-registry: true  # Eureka에서 다른 서비스 정보 조회
     service-url:
-      defaultZone: http://192.168.0.227:8088/eureka  # Eureka 서버 주소
+      defaultZone: http://192.168.0.230:8088/eureka  # Eureka 서버 주소
 
   instance:
     prefer-ip-address: true
