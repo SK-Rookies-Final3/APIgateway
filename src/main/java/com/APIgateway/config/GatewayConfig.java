@@ -5,7 +5,6 @@ import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -48,16 +47,27 @@ public class GatewayConfig {
                         .uri("lb://BRAND") // 필터 제거
                 )
 
-
-
-                // Brand - product
-                .route("product-register-owner", predicateSpec -> predicateSpec
-                        .path("/api/product/owner/{storeId}")
+                // 사용자(owner) 본인의 가게 상태(status) 조회 라우트 추가
+                .route("store-owner-status", predicateSpec -> predicateSpec
+                        .path("/api/store/owner/status")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
                         .uri("lb://BRAND")
                 )
+
+//
+//                .route("product-register-owner", predicateSpec -> predicateSpec
+//                        .path("/api/product/owner/{storeId}")
+//                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+//                                .filter(jwtAuthorizationFilter)
+//                                .rewritePath("/api/product/owner/{storeId}", "/api/product/owner/{storeId}?thumbnail_url={thumbnail_url}")
+//                        )
+//                        .uri("lb://BRAND")
+//                )
+
+
+
 
                 .route("product-update-owner", predicateSpec -> predicateSpec
                         .path("/api/product/owner/{storeId}/{productCode}")
@@ -68,12 +78,13 @@ public class GatewayConfig {
                 )
 
                 .route("product-delete-owner", predicateSpec -> predicateSpec
-                        .path("api/product/owner/{storeId}/{productCode}")
+                        .path("/api/product/owner/{storeId}/{productCode}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
                         .uri("lb://BRAND")
                 )
+
 
                 // Swagger UI 라우팅
                 .route("swagger-ui", predicateSpec -> predicateSpec
