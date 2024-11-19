@@ -18,7 +18,7 @@ public class GatewayConfig {
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
 
-                // Brand - store
+                // Brand - store 등록 요청
                 .route("store-owner-register", predicateSpec -> predicateSpec
                         .path("/api/store/owner/register")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
@@ -27,6 +27,7 @@ public class GatewayConfig {
                         .uri("lb://BRAND")
                 )
 
+                // Brand - store 권한 수정
                 .route("store-update-status", predicateSpec -> predicateSpec
                         .path("/api/store/master/{storeId}/status")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
@@ -34,6 +35,19 @@ public class GatewayConfig {
                         )
                         .uri("lb://BRAND")
                 )
+
+                // Brand - store 전체 조회
+                .route("store", predicateSpec -> predicateSpec
+                        .path("/open-api/store/")
+                        .uri("lb://BRAND") // 필터 제거
+                )
+
+                // Brand - store 상세 조회
+                .route("store-{storeId}", predicateSpec -> predicateSpec
+                        .path("/open-api/store/{storeId}")
+                        .uri("lb://BRAND") // 필터 제거
+                )
+
 
 
                 // Brand - product
