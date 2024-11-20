@@ -49,26 +49,23 @@ public class GatewayConfig {
 
                 // 사용자(owner) 본인의 가게 상태(status) 조회 라우트 추가
                 .route("store-owner-status", predicateSpec -> predicateSpec
-                        .path("/api/store/owner/status")
+                        .path("/api/store/owner/status/{userId}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
                         .uri("lb://BRAND")
                 )
 
-//
-//                .route("product-register-owner", predicateSpec -> predicateSpec
-//                        .path("/api/product/owner/{storeId}")
-//                        .filters(gatewayFilterSpec -> gatewayFilterSpec
-//                                .filter(jwtAuthorizationFilter)
-//                                .rewritePath("/api/product/owner/{storeId}", "/api/product/owner/{storeId}?thumbnail_url={thumbnail_url}")
-//                        )
-//                        .uri("lb://BRAND")
-//                )
+                // brand - product 상품 등록
+                .route("product-register-owner", predicateSpec -> predicateSpec
+                        .path("/api/product/owner/{storeId}")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://BRAND")
+                )
 
-
-
-
+                // brand - product 상품 수정
                 .route("product-update-owner", predicateSpec -> predicateSpec
                         .path("/api/product/owner/{storeId}/{productCode}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
@@ -77,12 +74,25 @@ public class GatewayConfig {
                         .uri("lb://BRAND")
                 )
 
+                // brand - product 상품 삭제
                 .route("product-delete-owner", predicateSpec -> predicateSpec
                         .path("/api/product/owner/{storeId}/{productCode}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
                         .uri("lb://BRAND")
+                )
+
+                // Brand - product 전체 조회
+                .route("product", predicateSpec -> predicateSpec
+                        .path("/open-api/product/")
+                        .uri("lb://BRAND") // 필터 제거
+                )
+
+                // Brand - product 상세 조회
+                .route("product-{productCode}", predicateSpec -> predicateSpec
+                        .path("/open-api/product/{productCode}")
+                        .uri("lb://BRAND") // 필터 제거
                 )
 
 
