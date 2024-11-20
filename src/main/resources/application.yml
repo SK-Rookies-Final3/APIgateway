@@ -5,6 +5,22 @@ spring:
   application:
     name: APIGATEWAY
 
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - DELETE
+              - OPTIONS
+              - PATCH
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
 eureka:
   client:
     register-with-eureka: true  # Eureka 서버에 서비스 등록
