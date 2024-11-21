@@ -19,13 +19,13 @@ public class GatewayConfig {
 
                 // Users - register
                 .route("users-register", predicateSpec -> predicateSpec
-                        .path("/open-api/register/")
+                        .path("/open-api/user/register/")
                         .uri("lb://USERS") // 필터 제거
                 )
 
                 // Users - login
                 .route("users-login", predicateSpec -> predicateSpec
-                        .path("/open-api/login/")
+                        .path("/open-api/user/login/")
                         .uri("lb://USERS") // 필터 제거
                 )
 
@@ -70,7 +70,7 @@ public class GatewayConfig {
 
                 // Brand - store 등록 요청
                 .route("store-owner-register", predicateSpec -> predicateSpec
-                        .path("/api/store/owner/register")
+                        .path("/api/brand/store/owner/register")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
@@ -80,7 +80,7 @@ public class GatewayConfig {
 
                 // Brand - store 권한 수정
                 .route("store-update-status", predicateSpec -> predicateSpec
-                        .path("/api/store/master/{storeId}/status")
+                        .path("/api/brand/store/master/{storeId}/status")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
@@ -89,19 +89,19 @@ public class GatewayConfig {
 
                 // Brand - store 전체 조회
                 .route("store", predicateSpec -> predicateSpec
-                        .path("/open-api/store/")
+                        .path("/open-api/brand/store/")
                         .uri("lb://BRAND") // 필터 제거
                 )
 
                 // Brand - store 상세 조회
                 .route("store-{storeId}", predicateSpec -> predicateSpec
-                        .path("/open-api/store/{storeId}")
+                        .path("/open-api/brand/store/{storeId}")
                         .uri("lb://BRAND") // 필터 제거
                 )
 
                 // 사용자(owner) 본인의 가게 상태(status) 조회 라우트 추가
                 .route("store-owner-status", predicateSpec -> predicateSpec
-                        .path("/api/store/owner/status/{userId}")
+                        .path("/api/brand/store/owner/status/{userId}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
@@ -110,7 +110,7 @@ public class GatewayConfig {
 
                 // brand - product 상품 등록
                 .route("product-register-owner", predicateSpec -> predicateSpec
-                        .path("/api/product/owner/{storeId}")
+                        .path("/api/brand/product/owner/{storeId}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
@@ -119,7 +119,7 @@ public class GatewayConfig {
 
                 // brand - product 상품 수정
                 .route("product-update-owner", predicateSpec -> predicateSpec
-                        .path("/api/product/owner/{storeId}/{productCode}")
+                        .path("/api/brand/product/owner/{storeId}/{productCode}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
@@ -128,7 +128,7 @@ public class GatewayConfig {
 
                 // brand - product 상품 삭제
                 .route("product-delete-owner", predicateSpec -> predicateSpec
-                        .path("/api/product/owner/{storeId}/{productCode}")
+                        .path("/api/brand/product/owner/{storeId}/{productCode}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
@@ -137,26 +137,26 @@ public class GatewayConfig {
 
                 // Brand - product 전체 조회
                 .route("product", predicateSpec -> predicateSpec
-                        .path("/open-api/product/")
+                        .path("/open-api/brand/product/")
                         .uri("lb://BRAND") // 필터 제거
                 )
 
                 // Brand - product 상세 조회
                 .route("product-{productCode}", predicateSpec -> predicateSpec
-                        .path("/open-api/product/{productCode}")
+                        .path("/open-api/brand/product/{productCode}")
                         .uri("lb://BRAND") // 필터 제거
                 )
 
 
                 // Brand - review 조회
                 .route("review-{productCode}", predicateSpec -> predicateSpec
-                        .path("/open-api/product/{productCode}")
+                        .path("/open-api/brand/product/{productCode}")
                         .uri("lb://BRAND") // 필터 제거
                 )
 
                 // Brand - review 등록
                 .route("review", predicateSpec -> predicateSpec
-                        .path("/api/review/{productCode}")
+                        .path("/api/brand/review/{productCode}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
@@ -165,7 +165,7 @@ public class GatewayConfig {
 
                 // Brand - review 삭제
                 .route("review-{reviewId}", predicateSpec -> predicateSpec
-                        .path("/api/review/{reviewId}")
+                        .path("/api/brand/review/{reviewId}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
