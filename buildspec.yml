@@ -27,6 +27,7 @@ phases:
     commands:
       - echo "Generating unique IMAGE_TAG based on timestamp..."
       - export IMAGE_TAG=$(date +%Y%m%d%H%M%S)
+      - echo "Generated IMAGE_TAG"
       - echo Building the backend JAR...
       - ./gradlew clean bootJar --exclude-task test
       - echo "Build completed, checking for JAR file:"
@@ -35,8 +36,8 @@ phases:
       - cp build/libs/APIgateway-0.0.1-SNAPSHOT.jar app.jar  # Dockerfile에서 사용하기 위해 app.jar로 복사
       - echo "Docker build 시작"
       - echo Building the Docker image...
-      - docker build -t $BACKEND_ECR_REPO:$IMAGE_TAG .
-      - docker tag $BACKEND_ECR_REPO:$IMAGE_TAG $ECR_URL/$BACKEND_ECR_REPO:$IMAGE_TAG
+      - docker build -t $ECR_URL/$BACKEND_ECR_REPO:$IMAGE_TAG .
+      - docker tag $ECR_URL/$BACKEND_ECR_REPO:$IMAGE_TAG $ECR_URL/$BACKEND_ECR_REPO:$IMAGE_TAG
 
   post_build:
     commands:
@@ -44,10 +45,10 @@ phases:
       - echo Pushing Docker image to ECR with tag $IMAGE_TAG...
       - docker push $ECR_URL/$BACKEND_ECR_REPO:$IMAGE_TAG
       - echo Updating Chart version in Chart.yaml...
-      - yq eval '.version = "'$(date +%Y%m%d%H%M)'"' -i HelmChart-for-Argo/helm-charts/Chart.yaml
-      - echo Updating backend Timestamp in values.yaml...
+      - yq eval '.version = "'$IMAGE_TAG'"' -i HelmChart-for-Argo/helm-charts/Chart.yaml
+      - echo Updating backend image tag in values.yaml...
       - yq eval '.backend.services[2].image.tag = "'$IMAGE_TAG'"' -i HelmChart-for-Argo/helm-charts/values.yaml
-      - yq eval '.backendTimestamp = "'$(date +%Y%m%d%H%M%S)'"' -i HelmChart-for-Argo/helm-charts/values.yaml
+      - yq eval '.backendTimestamp = "'$IMAGE_TAG'"' -i HelmChart-for-Argo/helm-charts/values.yaml
       - echo Packaging Helm chart...
       - cd HelmChart-for-Argo
       - helm package ./helm-charts -d output
@@ -58,8 +59,8 @@ phases:
       - echo Committing changes to values.yaml...
       - git config --global user.name "CodeBuild"
       - git config --global user.email "codebuild@example.com"
-      - git add ./helm-charts/values.yaml
-      - git commit -m "Update backendTimestamp to $IMAGE_TAG" || echo "No changes to commit"
+      - git add ./helm-charts/values.yaml ./helm-charts/Chart.yaml
+      - git commit -m "Update backendTimestamp and chart version to $IMAGE_TAG" || echo "No changes to commit"
       - git push origin main || echo "No changes to push"
 
 artifacts:
