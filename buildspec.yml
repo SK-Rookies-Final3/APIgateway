@@ -60,7 +60,7 @@ phases:
       - git config --global user.name "CodeBuild"
       - git config --global user.email "codebuild@example.com"
       - git add ./helm-charts/values.yaml ./helm-charts/Chart.yaml
-      - git commit -m "Update backendTimestamp and chart version to $IMAGE_TAG" || echo "No changes to commit"
+      - git commit -m "Update backendTimestamp and chart version to $IMAGE_TAG at apigateway" || echo "No changes to commit"
       - git push origin main || echo "No changes to push"
 
 artifacts:
