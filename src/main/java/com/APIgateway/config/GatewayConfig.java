@@ -29,7 +29,6 @@ public class GatewayConfig {
                         .uri("lb://USERS") // 필터 제거
                 )
 
-
                 // Users - update
                 .route("users-update", predicateSpec -> predicateSpec
                         .path("/api/user/update")
