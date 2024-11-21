@@ -17,6 +17,57 @@ public class GatewayConfig {
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
 
+                // Users - register
+                .route("users-register", predicateSpec -> predicateSpec
+                        .path("/open-api/register/")
+                        .uri("lb://USERS") // 필터 제거
+                )
+
+                // Users - login
+                .route("users-login", predicateSpec -> predicateSpec
+                        .path("/open-api/login/")
+                        .uri("lb://USERS") // 필터 제거
+                )
+
+
+                // Users - update
+                .route("users-update", predicateSpec -> predicateSpec
+                        .path("/api/user/update")
+                        .uri("lb://USERS") // 필터 제거
+                )
+
+                // Users - 조회
+                .route("users", predicateSpec -> predicateSpec
+                        .path("/api/user")
+                        .uri("lb://USERS") // 필터 제거
+                )
+
+                // Users - exit
+                .route("users-exit", predicateSpec -> predicateSpec
+                        .path("/api/user")
+                        .uri("lb://USERS") // 필터 제거
+                )
+
+                // Users - id 에서 유저 찾기
+                .route("users-id", predicateSpec -> predicateSpec
+                        .path("/api/user/{id}")
+                        .uri("lb://USERS") // 필터 제거
+                )
+
+
+                // Users - master
+                .route("users-master", predicateSpec -> predicateSpec
+                        .path("/api/user/master")
+                        .uri("lb://USERS") // 필터 제거
+                )
+
+                // Users - exit/{targetId}
+                .route("users-exit-target", predicateSpec -> predicateSpec
+                        .path("/api/user/master/exit/{targetId}")
+                        .uri("lb://USERS") // 필터 제거
+                )
+
+
                 // Brand - store 등록 요청
                 .route("store-owner-register", predicateSpec -> predicateSpec
                         .path("/api/store/owner/register")
@@ -25,6 +76,7 @@ public class GatewayConfig {
                         )
                         .uri("lb://BRAND")
                 )
+
 
                 // Brand - store 권한 수정
                 .route("store-update-status", predicateSpec -> predicateSpec
@@ -96,6 +148,30 @@ public class GatewayConfig {
                 )
 
 
+                // Brand - review 조회
+                .route("review-{productCode}", predicateSpec -> predicateSpec
+                        .path("/open-api/product/{productCode}")
+                        .uri("lb://BRAND") // 필터 제거
+                )
+
+                // Brand - review 등록
+                .route("review", predicateSpec -> predicateSpec
+                        .path("/api/review/{productCode}")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://BRAND")
+                )
+
+                // Brand - review 삭제
+                .route("review-{reviewId}", predicateSpec -> predicateSpec
+                        .path("/api/review/{reviewId}")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://BRAND")
+                )
+
                 // Swagger UI 라우팅
                 .route("swagger-ui", predicateSpec -> predicateSpec
                         .path("/swagger-ui/**", "/v3/api-docs/**")
@@ -103,5 +179,4 @@ public class GatewayConfig {
                 )
                 .build();
     }
-
 }
