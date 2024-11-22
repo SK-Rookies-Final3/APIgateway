@@ -19,13 +19,13 @@ public class GatewayConfig {
 
                 // Users - register
                 .route("users-register", predicateSpec -> predicateSpec
-                        .path("/open-api/user/register/")
+                        .path("/open-api/user/register")
                         .uri("lb://shortpingoo-backend-users-svc") // 필터 제거
                 )
 
                 // Users - login
                 .route("users-login", predicateSpec -> predicateSpec
-                        .path("/open-api/user/login/")
+                        .path("/open-api/user/login")
                         .uri("lb://shortpingoo-backend-users-svc") // 필터 제거
                 )
 
@@ -136,7 +136,7 @@ public class GatewayConfig {
 
                 // Brand - product 전체 조회
                 .route("product", predicateSpec -> predicateSpec
-                        .path("/open-api/brand/product/")
+                        .path("/open-api/brand/product")
                         .uri("lb://shortpingoo-backend-brand-svc") // 필터 제거
                 )
 
