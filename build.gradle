@@ -45,6 +45,7 @@ dependencies {
 
 	// spring cloud for native
 	implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client-all:3.1.3'
+	implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes:1.1.10.RELEASE'
 }
 
 dependencyManagement {
