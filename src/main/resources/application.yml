@@ -45,6 +45,7 @@ spring:
     kubernetes:
       discovery:
         enabled: true
+        all-namespaces: true
       service:
         locator:
           enabled: true
