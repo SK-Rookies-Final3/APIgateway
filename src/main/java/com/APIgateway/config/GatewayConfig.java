@@ -171,6 +171,21 @@ public class GatewayConfig {
                         .uri("lb://shortpingoo-backend-brand-svc")
                 )
 
+                // order 주문 생성
+                .route("order", predicateSpec -> predicateSpec
+                        .path("/api/order/{storeId}")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://ORDER")
+                )
+
+                // AI - 유튜브 숏츠 긍/부정
+                .route("shorts-search", predicateSpec -> predicateSpec
+                        .path("/api/shorts/search")
+                        .uri("lb://AI-Sentiment_Classification") // 필터 제거
+                )
+
                 // Swagger UI 라우팅
                 .route("swagger-ui", predicateSpec -> predicateSpec
                         .path("/swagger-ui/**", "/v3/api-docs/**")
