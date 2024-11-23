@@ -100,7 +100,7 @@ public class GatewayConfig {
 
                 // 사용자(owner) 본인의 가게 상태(status) 조회
                 .route("store-owner-status", predicateSpec -> predicateSpec
-                        .path("/api/brand/store/owner/status")
+                        .path("/api/brand/store/owner/status/{userId}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
