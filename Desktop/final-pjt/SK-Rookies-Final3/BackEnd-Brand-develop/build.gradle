@@ -1,0 +1,64 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.5'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.brand'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+// 여기 추가
+ext {
+	set('springCloudVersion', "2023.0.3")
+}
+
+dependencies {
+	// Spring Boot 의존성
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// 테스트 관련 의존성
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// Lombok 관련 의존성
+	compileOnly 'org.projectlombok:lombok:1.18.30'
+	annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+	// 데이터베이스 관련 의존성
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
+	// 개발 도구
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+
+	// 의존성(gateway, eureka-client) 추가
+	implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+	implementation 'org.modelmapper:modelmapper:3.1.0'
+	implementation group: 'me.paulschwarz', name: 'spring-dotenv', version: '4.0.0'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// 여기 추가
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}

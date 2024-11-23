@@ -1,0 +1,29 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: BRAND
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://192.168.0.179:8088/eureka
+
+  instance:
+    prefer-ip-address: true
+    instance-id: BRAND:8081  # 고정 값으로 설정
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+
+  resources:
+    static-locations: classpath:/static/
+    # 정적 리소스를 명시적으로 설정하고, API 경로와 충돌하지 않도록 조정
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
