@@ -98,9 +98,18 @@ public class GatewayConfig {
                         .uri("lb://BRAND") // 필터 제거
                 )
 
-                // 사용자(owner) 본인의 가게 상태(status) 조회 라우트 추가
+                // 사용자(owner) 본인의 가게 상태(status) 조회
                 .route("store-owner-status", predicateSpec -> predicateSpec
-                        .path("/api/brand/store/owner/status/{userId}")
+                        .path("/api/brand/store/owner/status")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://BRAND")
+                )
+
+                // 사용자(owner) 본인의 가게 상세 조회
+                .route("store-owner", predicateSpec -> predicateSpec
+                        .path("/api/brand/store/owner/{userId}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
@@ -169,6 +178,21 @@ public class GatewayConfig {
                                 .filter(jwtAuthorizationFilter)
                         )
                         .uri("lb://BRAND")
+                )
+
+                // order 주문 생성
+                .route("order", predicateSpec -> predicateSpec
+                        .path("/api/order/{storeId}")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://ORDER")
+                )
+
+                // AI - 유튜브 숏츠 긍/부정
+                .route("shorts-search", predicateSpec -> predicateSpec
+                        .path("/api/shorts/search")
+                        .uri("lb://AI-Sentiment_Classification") // 필터 제거
                 )
 
                 // Swagger UI 라우팅
