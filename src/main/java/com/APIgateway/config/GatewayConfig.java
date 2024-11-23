@@ -109,7 +109,7 @@ public class GatewayConfig {
 
                 // 사용자(owner) 본인의 가게 상세 조회
                 .route("store-owner", predicateSpec -> predicateSpec
-                        .path("/api/brand/store/owner/{userId}")
+                        .path("/api/brand/store/owner")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
