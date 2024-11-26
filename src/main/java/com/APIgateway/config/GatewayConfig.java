@@ -98,6 +98,7 @@ public class GatewayConfig {
                         .uri("lb://BRAND") // 필터 제거
                 )
 
+
                 // 사용자(owner) 본인의 가게 상태(status) 조회
                 .route("store-owner-status", predicateSpec -> predicateSpec
                         .path("/api/brand/store/owner/status/{userId}")
@@ -153,6 +154,21 @@ public class GatewayConfig {
                 .route("product-{productCode}", predicateSpec -> predicateSpec
                         .path("/open-api/brand/product/{productCode}")
                         .uri("lb://BRAND") // 필터 제거
+                )
+
+                // Brand - product 가게별 상품 상세 조회
+                .route("product-{storeId}", predicateSpec -> predicateSpec
+                        .path("/open-api/brand/product/{storeId}")
+                        .uri("lb://BRAND") // 필터 제거
+                )
+
+                // 사용자(owner) 본인의 가게의 상품 상세 조회
+                .route("product-owner", predicateSpec -> predicateSpec
+                        .path("/api/brand/product/owner")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://BRAND")
                 )
 
 
