@@ -213,7 +213,7 @@ public class GatewayConfig {
                 // AI - 유튜브 숏츠 긍/부정
                 .route("shorts-search", predicateSpec -> predicateSpec
                         .path("/api/shorts/search")
-                        .uri("lb://AI-Sentiment_Classification") // 필터 제거
+                        .uri("lb://shortpingoo-ai-flask-svc") // 필터 제거
                 )
 
                 // Swagger UI 라우팅
