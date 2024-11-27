@@ -19,51 +19,51 @@ public class GatewayConfig {
 
                 // Users - register
                 .route("users-register", predicateSpec -> predicateSpec
-                        .path("/open-api/user/register/")
-                        .uri("lb://USERS") // 필터 제거
+                        .path("/open-api/user/register")
+                        .uri("lb://USERS")
                 )
 
                 // Users - login
                 .route("users-login", predicateSpec -> predicateSpec
-                        .path("/open-api/user/login/")
-                        .uri("lb://USERS") // 필터 제거
+                        .path("/open-api/user/login")
+                        .uri("lb://USERS")
                 )
 
                 // Users - update
                 .route("users-update", predicateSpec -> predicateSpec
                         .path("/api/user/update")
-                        .uri("lb://USERS") // 필터 제거
+                        .uri("lb://USERS")
                 )
 
                 // Users - 조회
                 .route("users", predicateSpec -> predicateSpec
                         .path("/api/user")
-                        .uri("lb://USERS") // 필터 제거
+                        .uri("lb://USERS")
                 )
 
                 // Users - exit
                 .route("users-exit", predicateSpec -> predicateSpec
                         .path("/api/user")
-                        .uri("lb://USERS") // 필터 제거
+                        .uri("lb://USERS")
                 )
 
                 // Users - id 에서 유저 찾기
                 .route("users-id", predicateSpec -> predicateSpec
                         .path("/api/user/{id}")
-                        .uri("lb://USERS") // 필터 제거
+                        .uri("lb://USERS")
                 )
 
 
                 // Users - master
                 .route("users-master", predicateSpec -> predicateSpec
                         .path("/api/user/master")
-                        .uri("lb://USERS") // 필터 제거
+                        .uri("lb://USERS")
                 )
 
                 // Users - exit/{targetId}
                 .route("users-exit-target", predicateSpec -> predicateSpec
                         .path("/api/user/master/exit/{targetId}")
-                        .uri("lb://USERS") // 필터 제거
+                        .uri("lb://USERS")
                 )
 
 
@@ -89,13 +89,13 @@ public class GatewayConfig {
                 // Brand - store 전체 조회
                 .route("store", predicateSpec -> predicateSpec
                         .path("/open-api/brand/store/")
-                        .uri("lb://BRAND") // 필터 제거
+                        .uri("lb://BRAND")
                 )
 
                 // Brand - store 상세 조회
                 .route("store-{storeId}", predicateSpec -> predicateSpec
                         .path("/open-api/brand/store/{storeId}")
-                        .uri("lb://BRAND") // 필터 제거
+                        .uri("lb://BRAND")
                 )
 
 
@@ -147,25 +147,25 @@ public class GatewayConfig {
                 // Brand - product 전체 조회
                 .route("product", predicateSpec -> predicateSpec
                         .path("/open-api/brand/product/")
-                        .uri("lb://BRAND") // 필터 제거
+                        .uri("lb://BRAND")
                 )
 
                 // Brand - product 상세 조회
                 .route("product-{productCode}", predicateSpec -> predicateSpec
                         .path("/open-api/brand/product/{productCode}")
-                        .uri("lb://BRAND") // 필터 제거
+                        .uri("lb://BRAND")
                 )
 
                 // Brand - product 상세 조회
                 .route("product-{category}", predicateSpec -> predicateSpec
                         .path("/open-api/brand/product/category/{category}")
-                        .uri("lb://BRAND") // 필터 제거
+                        .uri("lb://BRAND")
                 )
 
                 // Brand - product 가게별 상품 전체 조회
                 .route("product-{storeId}", predicateSpec -> predicateSpec
                         .path("/open-api/brand/product/store/{storeId}")
-                        .uri("lb://BRAND") // 필터 제거
+                        .uri("lb://BRAND")
                 )
 
                 // 사용자(owner) 본인의 가게의 상품 상세 조회
@@ -181,7 +181,7 @@ public class GatewayConfig {
                 // Brand - review 조회
                 .route("review-{productCode}", predicateSpec -> predicateSpec
                         .path("/open-api/brand/product/{productCode}")
-                        .uri("lb://BRAND") // 필터 제거
+                        .uri("lb://BRAND")
                 )
 
                 // Brand - review 등록
@@ -214,7 +214,7 @@ public class GatewayConfig {
                 // AI - 유튜브 숏츠 긍/부정
                 .route("shorts-search", predicateSpec -> predicateSpec
                         .path("/api/shorts/search")
-                        .uri("lb://AI-Sentiment_Classification") // 필터 제거
+                        .uri("lb://AI-Sentiment_Classification")
                 )
 
                 // 이미지 파일 접근
