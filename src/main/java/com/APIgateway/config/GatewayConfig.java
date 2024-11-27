@@ -217,6 +217,14 @@ public class GatewayConfig {
                         .uri("lb://AI-Sentiment_Classification") // 필터 제거
                 )
 
+                // 이미지 파일 접근
+                .route("image-access", predicateSpec -> predicateSpec
+                        .path("/uploads/**")
+                        .uri("lb://BRAND")
+                )
+
+
+
                 // Swagger UI 라우팅
                 .route("swagger-ui", predicateSpec -> predicateSpec
                         .path("/swagger-ui/**", "/v3/api-docs/**")
