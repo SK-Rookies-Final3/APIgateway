@@ -202,13 +202,13 @@ public class GatewayConfig {
                 )
 
                 // order 주문 생성
-                .route("order", predicateSpec -> predicateSpec
-                        .path("/api/order/{storeId}")
-                        .filters(gatewayFilterSpec -> gatewayFilterSpec
-                                .filter(jwtAuthorizationFilter)
-                        )
-                        .uri("lb://ORDER")
-                )
+                // .route("order", predicateSpec -> predicateSpec
+                //         .path("/api/order/{storeId}")
+                //         .filters(gatewayFilterSpec -> gatewayFilterSpec
+                //                 .filter(jwtAuthorizationFilter)
+                //         )
+                //         .uri("lb://ORDER")
+                // )
 
                 // AI - 유튜브 숏츠 긍/부정
                 .route("shorts-search", predicateSpec -> predicateSpec
