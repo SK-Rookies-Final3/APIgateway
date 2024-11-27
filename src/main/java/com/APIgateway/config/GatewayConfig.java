@@ -119,7 +119,7 @@ public class GatewayConfig {
 
                 // brand - product 상품 등록
                 .route("product-register-owner", predicateSpec -> predicateSpec
-                        .path("/api/brand/product/owner")
+                        .path("/api/brand/product/owner/{storeId}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
