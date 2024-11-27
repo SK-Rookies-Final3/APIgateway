@@ -34,34 +34,34 @@
 ##     lease-renewal-interval-in-seconds: 10  # 갱신 요청 간격 (초)
 ##     lease-expiration-duration-in-seconds: 30  # 만료 시간 (초)
 #
-#server:
-#  port: 8089
-#
-#spring:
-#  application:
-#    name: APIGATEWAY
-#
-#  cloud:
-#    kubernetes:
-#      discovery:
-#        enabled: true
-#        all-namespaces: true
-#        discovery-server-url: https://7DF59376A215C3C245AFE463F2B1E4C2.yl4.ap-northeast-2.eks.amazonaws.com
-#      service:
-#        locator:
-#          enabled: true
-#    gateway:
-#      globalxcors:
-#        corsConfigurations:
-#          '[/**]':
-#            allowedOrigins: "**"
-#            allowedMethods:
-#              - GET
-#              - POST
-#              - DELETE
-#              - OPTIONS
-#              - PATCH
-#            allowedHeaders:
-#              - "*"
-#            allowCredentials: true
-#
+server:
+ port: 8089
+
+spring:
+ application:
+   name: APIGATEWAY
+
+ cloud:
+   kubernetes:
+     discovery:
+       enabled: true
+       all-namespaces: true
+       discovery-server-url: https://52EE7638C4FAD933BD2C97E543A9E1B0.sk1.ap-northeast-2.eks.amazonaws.com
+     service:
+       locator:
+         enabled: true
+   gateway:
+     globalxcors:
+       corsConfigurations:
+         '[/**]':
+           allowedOrigins: "**"
+           allowedMethods:
+             - GET
+             - POST
+             - DELETE
+             - OPTIONS
+             - PATCH
+           allowedHeaders:
+             - "*"
+           allowCredentials: true
+
