@@ -98,9 +98,18 @@ public class GatewayConfig {
                         .uri("lb://shortpingoo-backend-brand-svc") // 필터 제거
                 )
 
-                // 사용자(owner) 본인의 가게 상태(status) 조회 라우트 추가
+                // 사용자(owner) 본인의 가게 상태(status) 조회
                 .route("store-owner-status", predicateSpec -> predicateSpec
                         .path("/api/brand/store/owner/status/{userId}")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://shortpingoo-backend-brand-svc")
+                )
+
+                // 사용자(owner) 본인의 가게 상세 조회
+                .route("store-owner", predicateSpec -> predicateSpec
+                        .path("/api/brand/store/owner")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
@@ -134,15 +143,36 @@ public class GatewayConfig {
                         .uri("lb://shortpingoo-backend-brand-svc")
                 )
 
+                // brand - product 사용자(owner) 본인 가게의 상품 전체 조회
+                .route("product-owner", predicateSpec -> predicateSpec
+                        .path("/api/brand/product/owner")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://shortpingoo-backend-brand-svc")
+                )
+
                 // Brand - product 전체 조회
                 .route("product", predicateSpec -> predicateSpec
-                        .path("/open-api/brand/product")
+                        .path("/open-api/brand/product/")
                         .uri("lb://shortpingoo-backend-brand-svc") // 필터 제거
                 )
 
                 // Brand - product 상세 조회
                 .route("product-{productCode}", predicateSpec -> predicateSpec
                         .path("/open-api/brand/product/{productCode}")
+                        .uri("lb://shortpingoo-backend-brand-svc") // 필터 제거
+                )
+
+                // Brand - product 카테고리 상세 조회
+                .route("product-category-{category}", predicateSpec -> predicateSpec
+                        .path("/open-api/brand/product/category/{category}")
+                        .uri("lb://shortpingoo-backend-brand-svc") // 필터 제거
+                )
+
+                // Brand - product 가게 별 상품 전체 조회
+                .route("product-store-{storeId}", predicateSpec -> predicateSpec
+                        .path("/open-api/brand/product/store/{storeId}")
                         .uri("lb://shortpingoo-backend-brand-svc") // 필터 제거
                 )
 
