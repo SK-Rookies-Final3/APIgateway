@@ -204,7 +204,7 @@ public class GatewayConfig {
 
                 // order 주문 생성
                 .route("order", predicateSpec -> predicateSpec
-                        .path("/api/order/{storeId}")
+                        .path("/api/order")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
@@ -217,12 +217,17 @@ public class GatewayConfig {
                         .uri("lb://AI-Sentiment_Classification")
                 )
 
-                // 이미지 파일 접근
+                // 로컬 이미지 파일 접근
                 .route("image-access", predicateSpec -> predicateSpec
                         .path("/uploads/**")
                         .uri("lb://BRAND")
                 )
 
+                // S3 이미지 파일 접근
+                .route("presigned-url", predicateSpec -> predicateSpec
+                        .path("/presigned-url/*")
+                        .uri("lb://BRAND")
+                )
 
 
                 // Swagger UI 라우팅
