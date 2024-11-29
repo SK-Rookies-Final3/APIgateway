@@ -211,6 +211,16 @@ public class GatewayConfig {
                         .uri("lb://ORDER")
                 )
 
+                // order - 사용자(client)별 전체 주문 내역 조회
+                // code 는 order 테이블의 index code 이다.
+                .route("order-{code}", predicateSpec -> predicateSpec
+                        .path("/api/order/client")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://ORDER")
+                )
+
                 // AI - 유튜브 숏츠 긍/부정
                 .route("shorts-search", predicateSpec -> predicateSpec
                         .path("/api/shorts/search")
