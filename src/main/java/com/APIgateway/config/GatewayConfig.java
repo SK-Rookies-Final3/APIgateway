@@ -230,6 +230,23 @@ public class GatewayConfig {
                         .uri("lb://ORDER")
                 )
 
+                // 상품 별 재고 수정
+                .route("product-stock", predicateSpec -> predicateSpec
+                        .path("/api/brand/product/stock/{productCode}")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://BRAND")
+                )
+
+                // 상품 별 재고 조회
+                .route("product-stock", predicateSpec -> predicateSpec
+                        .path("/open-api/brand/product/stock/{productCode}")
+                        .uri("lb://BRAND")
+                )
+
+
+
                 // AI - 유튜브 숏츠 긍/부정
                 .route("shorts-search", predicateSpec -> predicateSpec
                         .path("/api/shorts/search")
