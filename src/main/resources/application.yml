@@ -46,7 +46,7 @@ spring:
      discovery:
        enabled: true
        all-namespaces: true
-       discovery-server-url: https://52EE7638C4FAD933BD2C97E543A9E1B0.sk1.ap-northeast-2.eks.amazonaws.com
+       discovery-server-url: https://4AA9EE5A09748915D3359EA9C144C6E8.gr7.ap-northeast-2.eks.amazonaws.com
      service:
        locator:
          enabled: true
