@@ -194,8 +194,8 @@ public class GatewayConfig {
                 )
 
                 // Brand - review 삭제
-                .route("review-{reviewId}", predicateSpec -> predicateSpec
-                        .path("/api/brand/review/{reviewId}")
+                .route("review-{reviewCode}", predicateSpec -> predicateSpec
+                        .path("/api/brand/review/{reviewCode}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
