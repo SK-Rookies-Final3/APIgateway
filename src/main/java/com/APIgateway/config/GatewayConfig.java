@@ -306,6 +306,36 @@ public class GatewayConfig {
                         .uri("lb://CART")
                 )
 
+                // 위시리스트 관련 라우트, JWT 인증 필터 적용
+                .route("custom-cart-item-by-productCode", predicateSpec -> predicateSpec
+                        .path("/api/wishlist/products")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://WISHLISHT")
+                )
+                .route("custom-cart-item-by-productCode", predicateSpec -> predicateSpec
+                        .path("/api/wishlist/shorts")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://WISHLISHT")
+                )
+                .route("custom-cart-item-by-productCode", predicateSpec -> predicateSpec
+                        .path("/api/wishlist/products/{productCode}")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://WISHLISHT")
+                )
+                .route("custom-cart-item-by-productCode", predicateSpec -> predicateSpec
+                        .path("/api/wishlist/shorts/{shortsCode}")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://WISHLISHT")
+                )
+
 
                 // Swagger UI 라우팅
                 .route("swagger-ui", predicateSpec -> predicateSpec
