@@ -180,7 +180,7 @@ public class GatewayConfig {
 
                 // Brand - review 조회
                 .route("review-{productCode}", predicateSpec -> predicateSpec
-                        .path("/open-api/brand/product/{productCode}")
+                        .path("/open-api/brand/review/{productCode}")
                         .uri("lb://BRAND")
                 )
 
