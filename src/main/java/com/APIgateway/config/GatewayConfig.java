@@ -88,7 +88,7 @@ public class GatewayConfig {
 
                         // Brand - store 전체 조회
                         .route("store", predicateSpec -> predicateSpec
-                                .path("/open-api/brand/store/")
+                                .path("/open-api/brand/store")
                                 .uri("lb://shortpingoo-backend-brand-svc")
                         )
 
@@ -146,7 +146,7 @@ public class GatewayConfig {
 
                         // Brand - product 전체 조회
                         .route("product", predicateSpec -> predicateSpec
-                                .path("/open-api/brand/product/")
+                                .path("/open-api/brand/product")
                                 .uri("lb://shortpingoo-backend-brand-svc")
                         )
 
