@@ -53,6 +53,12 @@ public class JwtAuthorizationFilter implements GatewayFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         try {
+            // 특정 경로를 필터링에서 제외 (예: /api/brand/product/owner)
+            String requestPath = exchange.getRequest().getURI().getPath();
+            if (requestPath.startsWith("/api/brand/product/owner")) {
+                return chain.filter(exchange);
+            }
+
             List<String> authorizations = getAuthorizations(exchange);  // Authorization 헤더 추출
 
             if (isAuthorizationHeaderMissing(authorizations)) {
@@ -114,23 +120,48 @@ public class JwtAuthorizationFilter implements GatewayFilter {
         return ERROR_UNKNOWN;
     }
 
+//    private Mono<Void> sendErrorResponse(ServerWebExchange exchange, int errorCode, Exception e) {
+//        try {
+//            log.error("Error occurred with token: {} - {} - {}", e.getClass().getSimpleName(), errorCode, e.getMessage());
+//
+//            ErrorResponse errorResponse = new ErrorResponse(errorCode, e.getMessage());
+//            String errorBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(errorResponse);
+//
+//            ServerHttpResponse response = exchange.getResponse();
+//            response.setStatusCode(HttpStatus.valueOf(errorCode));
+//            response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+//
+//            DataBuffer buffer = response.bufferFactory().wrap(errorBody.getBytes(StandardCharsets.UTF_8));
+//            return response.writeWith(Flux.just(buffer));
+//        } catch (JsonProcessingException ex) {
+//            throw new RuntimeException("Failed to process error response", ex);
+//        }
+//    }
+
     private Mono<Void> sendErrorResponse(ServerWebExchange exchange, int errorCode, Exception e) {
         try {
             log.error("Error occurred with token: {} - {} - {}", e.getClass().getSimpleName(), errorCode, e.getMessage());
 
+            // 에러 응답 생성
             ErrorResponse errorResponse = new ErrorResponse(errorCode, e.getMessage());
             String errorBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(errorResponse);
 
+            // 응답 설정
             ServerHttpResponse response = exchange.getResponse();
-            response.setStatusCode(HttpStatus.valueOf(errorCode));
-            response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+            response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR); // 기본적으로 500 설정
+            if (HttpStatus.resolve(errorCode) != null) { // 에러 코드가 유효한 HttpStatus인 경우
+                response.setStatusCode(HttpStatus.resolve(errorCode));
+            }
 
+            response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
             DataBuffer buffer = response.bufferFactory().wrap(errorBody.getBytes(StandardCharsets.UTF_8));
+
             return response.writeWith(Flux.just(buffer));
         } catch (JsonProcessingException ex) {
             throw new RuntimeException("Failed to process error response", ex);
         }
     }
+
 
     private List<String> getAuthorizations(ServerWebExchange exchange) {
         ServerHttpRequest request = exchange.getRequest();
