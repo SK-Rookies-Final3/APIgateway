@@ -52,40 +52,45 @@ public class JwtAuthorizationFilter implements GatewayFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        String requestPath = exchange.getRequest().getURI().getPath();
+        log.debug("Request Path: {}", requestPath);
+
+        // 특정 경로 제외 처리
+        if (requestPath.startsWith("/api/brand/product/owner")) {
+            log.debug("Excluding path from JWT filter: {}", requestPath);
+            return chain.filter(exchange); // 필터를 건너뜀
+        }
+
         try {
-            // 특정 경로를 필터링에서 제외 (예: /api/brand/product/owner)
-            String requestPath = exchange.getRequest().getURI().getPath();
-            if (requestPath.startsWith("/api/brand/product/owner")) {
-                return chain.filter(exchange);
-            }
-
-            List<String> authorizations = getAuthorizations(exchange);  // Authorization 헤더 추출
-
+            // 나머지 경로에 대해 기존 로직 실행
+            List<String> authorizations = getAuthorizations(exchange);
             if (isAuthorizationHeaderMissing(authorizations)) {
                 return sendErrorResponse(exchange, ERROR_NO_AUTH, new NotExistsAuthorization());
             }
 
-            String jwtToken = parseAuthorizationToken(authorizations.get(0));  // Bearer 토큰 추출
+            String jwtToken = parseAuthorizationToken(authorizations.get(0));
             Claims claims = parseAndValidateJwt(jwtToken);
 
+            String userId = claims.get("id").toString();
+            if (userId == null || userId.isEmpty()) {
+                throw new UnauthorizedAccessException("Invalid User ID in JWT");
+            }
 
-            // JWT에서 사용자 ID 추출 후 int로 변환
-            String userId = claims.get("id").toString(); // User ID를 int로 변환
-
+            // 수정된 요청에 사용자 정보를 추가
             ServerHttpRequest modifiedRequest = new ServerHttpRequestDecorator(exchange.getRequest()) {
                 @Override
                 public HttpHeaders getHeaders() {
                     HttpHeaders httpHeaders = new HttpHeaders();
-                    httpHeaders.add("X-User-Id", String.valueOf(userId));
+                    httpHeaders.add("X-User-Id", userId);
                     httpHeaders.putAll(super.getHeaders());
                     return httpHeaders;
                 }
             };
 
-            log.debug("Request URI to Eureka Server: " + exchange.getRequest().getURI());
-            // 수정된 요청을 새로운 ServerWebExchange로 설정
+            log.debug("JWT validated successfully for user ID: {}", userId);
             return chain.filter(exchange.mutate().request(modifiedRequest).build());
         } catch (Exception e) {
+            log.error("JWT validation error", e);
             return sendErrorResponse(exchange, getErrorCode(e), e);
         }
     }
@@ -120,48 +125,23 @@ public class JwtAuthorizationFilter implements GatewayFilter {
         return ERROR_UNKNOWN;
     }
 
-//    private Mono<Void> sendErrorResponse(ServerWebExchange exchange, int errorCode, Exception e) {
-//        try {
-//            log.error("Error occurred with token: {} - {} - {}", e.getClass().getSimpleName(), errorCode, e.getMessage());
-//
-//            ErrorResponse errorResponse = new ErrorResponse(errorCode, e.getMessage());
-//            String errorBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(errorResponse);
-//
-//            ServerHttpResponse response = exchange.getResponse();
-//            response.setStatusCode(HttpStatus.valueOf(errorCode));
-//            response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-//
-//            DataBuffer buffer = response.bufferFactory().wrap(errorBody.getBytes(StandardCharsets.UTF_8));
-//            return response.writeWith(Flux.just(buffer));
-//        } catch (JsonProcessingException ex) {
-//            throw new RuntimeException("Failed to process error response", ex);
-//        }
-//    }
-
     private Mono<Void> sendErrorResponse(ServerWebExchange exchange, int errorCode, Exception e) {
         try {
             log.error("Error occurred with token: {} - {} - {}", e.getClass().getSimpleName(), errorCode, e.getMessage());
 
-            // 에러 응답 생성
             ErrorResponse errorResponse = new ErrorResponse(errorCode, e.getMessage());
             String errorBody = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(errorResponse);
 
-            // 응답 설정
             ServerHttpResponse response = exchange.getResponse();
-            response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR); // 기본적으로 500 설정
-            if (HttpStatus.resolve(errorCode) != null) { // 에러 코드가 유효한 HttpStatus인 경우
-                response.setStatusCode(HttpStatus.resolve(errorCode));
-            }
-
+            response.setStatusCode(HttpStatus.valueOf(errorCode));
             response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-            DataBuffer buffer = response.bufferFactory().wrap(errorBody.getBytes(StandardCharsets.UTF_8));
 
+            DataBuffer buffer = response.bufferFactory().wrap(errorBody.getBytes(StandardCharsets.UTF_8));
             return response.writeWith(Flux.just(buffer));
         } catch (JsonProcessingException ex) {
             throw new RuntimeException("Failed to process error response", ex);
         }
     }
-
 
     private List<String> getAuthorizations(ServerWebExchange exchange) {
         ServerHttpRequest request = exchange.getRequest();
