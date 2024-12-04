@@ -20,50 +20,50 @@ public class GatewayConfig {
                 // Users - register
                 .route("users-register", predicateSpec -> predicateSpec
                         .path("/open-api/user/register")
-                        .uri("lb://shortpingoo-backend-users-svc") // 필터 제거
+                        .uri("lb://USERS")
                 )
 
                 // Users - login
                 .route("users-login", predicateSpec -> predicateSpec
                         .path("/open-api/user/login")
-                        .uri("lb://shortpingoo-backend-users-svc") // 필터 제거
+                        .uri("lb://USERS")
                 )
 
                 // Users - update
                 .route("users-update", predicateSpec -> predicateSpec
                         .path("/api/user/update")
-                        .uri("lb://shortpingoo-backend-users-svc") // 필터 제거
+                        .uri("lb://USERS")
                 )
 
                 // Users - 조회
                 .route("users", predicateSpec -> predicateSpec
                         .path("/api/user")
-                        .uri("lb://shortpingoo-backend-users-svc") // 필터 제거
+                        .uri("lb://USERS")
                 )
 
                 // Users - exit
                 .route("users-exit", predicateSpec -> predicateSpec
                         .path("/api/user")
-                        .uri("lb://shortpingoo-backend-users-svc") // 필터 제거
+                        .uri("lb://USERS")
                 )
 
                 // Users - id 에서 유저 찾기
                 .route("users-id", predicateSpec -> predicateSpec
                         .path("/api/user/{id}")
-                        .uri("lb://shortpingoo-backend-users-svc") // 필터 제거
+                        .uri("lb://USERS")
                 )
 
 
                 // Users - master
                 .route("users-master", predicateSpec -> predicateSpec
                         .path("/api/user/master")
-                        .uri("lb://shortpingoo-backend-users-svc") // 필터 제거
+                        .uri("lb://USERS")
                 )
 
                 // Users - exit/{targetId}
                 .route("users-exit-target", predicateSpec -> predicateSpec
                         .path("/api/user/master/exit/{targetId}")
-                        .uri("lb://shortpingoo-backend-users-svc") // 필터 제거
+                        .uri("lb://USERS")
                 )
 
 
@@ -73,7 +73,7 @@ public class GatewayConfig {
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
-                        .uri("lb://shortpingoo-backend-brand-svc")
+                        .uri("lb://BRAND")
                 )
 
 
@@ -83,20 +83,21 @@ public class GatewayConfig {
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
-                        .uri("lb://shortpingoo-backend-brand-svc")
+                        .uri("lb://BRAND")
                 )
 
                 // Brand - store 전체 조회
                 .route("store", predicateSpec -> predicateSpec
                         .path("/open-api/brand/store/")
-                        .uri("lb://shortpingoo-backend-brand-svc") // 필터 제거
+                        .uri("lb://BRAND")
                 )
 
                 // Brand - store 상세 조회
                 .route("store-{storeId}", predicateSpec -> predicateSpec
                         .path("/open-api/brand/store/{storeId}")
-                        .uri("lb://shortpingoo-backend-brand-svc") // 필터 제거
+                        .uri("lb://BRAND")
                 )
+
 
                 // 사용자(owner) 본인의 가게 상태(status) 조회
                 .route("store-owner-status", predicateSpec -> predicateSpec
@@ -104,7 +105,7 @@ public class GatewayConfig {
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
-                        .uri("lb://shortpingoo-backend-brand-svc")
+                        .uri("lb://BRAND")
                 )
 
                 // 사용자(owner) 본인의 가게 상세 조회
@@ -113,7 +114,7 @@ public class GatewayConfig {
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
-                        .uri("lb://shortpingoo-backend-brand-svc")
+                        .uri("lb://BRAND")
                 )
 
                 // brand - product 상품 등록
@@ -122,7 +123,7 @@ public class GatewayConfig {
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
-                        .uri("lb://shortpingoo-backend-brand-svc")
+                        .uri("lb://BRAND")
                 )
 
                 // brand - product 상품 수정
@@ -131,7 +132,7 @@ public class GatewayConfig {
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
-                        .uri("lb://shortpingoo-backend-brand-svc")
+                        .uri("lb://BRAND")
                 )
 
                 // brand - product 상품 삭제
@@ -140,47 +141,47 @@ public class GatewayConfig {
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
-                        .uri("lb://shortpingoo-backend-brand-svc")
-                )
-
-                // brand - product 사용자(owner) 본인 가게의 상품 전체 조회
-                .route("product-owner", predicateSpec -> predicateSpec
-                        .path("/api/brand/product/owner")
-                        .filters(gatewayFilterSpec -> gatewayFilterSpec
-                                .filter(jwtAuthorizationFilter)
-                        )
-                        .uri("lb://shortpingoo-backend-brand-svc")
+                        .uri("lb://BRAND")
                 )
 
                 // Brand - product 전체 조회
                 .route("product", predicateSpec -> predicateSpec
                         .path("/open-api/brand/product/")
-                        .uri("lb://shortpingoo-backend-brand-svc") // 필터 제거
+                        .uri("lb://BRAND")
                 )
 
                 // Brand - product 상세 조회
                 .route("product-{productCode}", predicateSpec -> predicateSpec
                         .path("/open-api/brand/product/{productCode}")
-                        .uri("lb://shortpingoo-backend-brand-svc") // 필터 제거
+                        .uri("lb://BRAND")
                 )
 
-                // Brand - product 카테고리 상세 조회
-                .route("product-category-{category}", predicateSpec -> predicateSpec
+                // Brand - product 상세 조회
+                .route("product-{category}", predicateSpec -> predicateSpec
                         .path("/open-api/brand/product/category/{category}")
-                        .uri("lb://shortpingoo-backend-brand-svc") // 필터 제거
+                        .uri("lb://BRAND")
                 )
 
-                // Brand - product 가게 별 상품 전체 조회
-                .route("product-store-{storeId}", predicateSpec -> predicateSpec
+                // Brand - product 가게별 상품 전체 조회
+                .route("product-{storeId}", predicateSpec -> predicateSpec
                         .path("/open-api/brand/product/store/{storeId}")
-                        .uri("lb://shortpingoo-backend-brand-svc") // 필터 제거
+                        .uri("lb://BRAND")
+                )
+
+                // 사용자(owner) 본인의 가게의 상품 상세 조회
+                .route("product-owner", predicateSpec -> predicateSpec
+                        .path("/api/brand/product/owner")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://BRAND")
                 )
 
 
                 // Brand - review 조회
                 .route("review-{productCode}", predicateSpec -> predicateSpec
                         .path("/open-api/brand/product/{productCode}")
-                        .uri("lb://shortpingoo-backend-brand-svc") // 필터 제거
+                        .uri("lb://BRAND")
                 )
 
                 // Brand - review 등록
@@ -189,32 +190,149 @@ public class GatewayConfig {
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
-                        .uri("lb://shortpingoo-backend-brand-svc")
+                        .uri("lb://BRAND")
                 )
 
                 // Brand - review 삭제
-                .route("review-{reviewId}", predicateSpec -> predicateSpec
-                        .path("/api/brand/review/{reviewId}")
+                .route("review-{reviewCode}", predicateSpec -> predicateSpec
+                        .path("/api/brand/review/{reviewCode}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
-                        .uri("lb://shortpingoo-backend-brand-svc")
+                        .uri("lb://BRAND")
                 )
 
                 // order 주문 생성
-                // .route("order", predicateSpec -> predicateSpec
-                //         .path("/api/order/{storeId}")
-                //         .filters(gatewayFilterSpec -> gatewayFilterSpec
-                //                 .filter(jwtAuthorizationFilter)
-                //         )
-                //         .uri("lb://ORDER")
-                // )
+                .route("order", predicateSpec -> predicateSpec
+                        .path("/api/order")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://ORDER")
+                )
+
+                // order - 사용자(client)별 전체 주문 내역 조회
+                // code 는 order 테이블의 index code 이다.
+                .route("order-client", predicateSpec -> predicateSpec
+                        .path("/api/order/client")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://ORDER")
+                )
+
+                // order - 사용자(owner)별 가게의 전체 주문 내역 조회
+                .route("order-owner", predicateSpec -> predicateSpec
+                        .path("/api/order/owner")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://ORDER")
+                )
+
+                // 상품 별 재고 수정
+                .route("product-stock", predicateSpec -> predicateSpec
+                        .path("/open-api/brand/product/stock/{productCode}")
+                        .uri("lb://BRAND")
+                )
+
+                // 상품 별 재고 조회
+                .route("product-stock", predicateSpec -> predicateSpec
+                        .path("/open-api/brand/product/stock/{productCode}")
+                        .uri("lb://BRAND")
+                )
+
+
 
                 // AI - 유튜브 숏츠 긍/부정
                 .route("shorts-search", predicateSpec -> predicateSpec
                         .path("/api/shorts/search")
-                        .uri("lb://shortpingoo-ai-flask-svc") // 필터 제거
+                        .uri("lb://AI-Sentiment_Classification")
                 )
+
+                // 로컬 이미지 파일 접근
+                .route("image-access", predicateSpec -> predicateSpec
+                        .path("/uploads/**")
+                        .uri("lb://BRAND")
+                )
+
+                // S3 이미지 파일 접근
+                .route("presigned-url", predicateSpec -> predicateSpec
+                        .path("/presigned-url/*")
+                        .uri("lb://BRAND")
+                )
+                // 장바구니 관련 라우트, JWT 인증 필터 적용
+
+                .route("cart-items", predicateSpec -> predicateSpec
+                        .path("/api/cart/items")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://CART")
+                )
+
+                .route("cart-item-by-productCode", predicateSpec -> predicateSpec
+                        .path("/api/cart/items/{productCode}")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://CART")
+                )
+
+                .route("custom-cart-items", predicateSpec -> predicateSpec
+                        .path("/api/cart/custom/items")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://CART")
+                )
+
+                .route("update-cart-title", predicateSpec -> predicateSpec
+                        .path("/api/cart/custom/updateTitle")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://CART")
+                )
+
+                .route("custom-cart-item-by-productCode", predicateSpec -> predicateSpec
+                        .path("/api/cart/custom/items/{productCode}")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://CART")
+                )
+
+                // 위시리스트 관련 라우트, JWT 인증 필터 적용
+                .route("wish-product", predicateSpec -> predicateSpec
+                        .path("/api/wishlist/products")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://WISHLISHT")
+                )
+                .route("wish-shorts", predicateSpec -> predicateSpec
+                        .path("/api/wishlist/shorts")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://WISHLISHT")
+                )
+                .route("wish-product-Delete", predicateSpec -> predicateSpec
+                        .path("/api/wishlist/products/{productCode}")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://WISHLISHT")
+                )
+                .route("wish-shorts-Delete", predicateSpec -> predicateSpec
+                        .path("/api/wishlist/shorts/{shortsCode}")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://WISHLISHT")
+                )
+
 
                 // Swagger UI 라우팅
                 .route("swagger-ui", predicateSpec -> predicateSpec
