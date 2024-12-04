@@ -208,7 +208,7 @@ public class GatewayConfig {
                                 .filters(gatewayFilterSpec -> gatewayFilterSpec
                                         .filter(jwtAuthorizationFilter)
                                 )
-                                .uri("lib://shortpingoo-backend-order-svc")
+                                .uri("lb://shortpingoo-backend-order-svc")
                         )
 
                         // order - 사용자(client)별 전체 주문 내역 조회
@@ -218,7 +218,7 @@ public class GatewayConfig {
                                 .filters(gatewayFilterSpec -> gatewayFilterSpec
                                         .filter(jwtAuthorizationFilter)
                                 )
-                                .uri("lib://shortpingoo-backend-order-svc")
+                                .uri("lb://shortpingoo-backend-order-svc")
                         )
 
                         // order - 사용자(owner)별 가게의 전체 주문 내역 조회
@@ -227,7 +227,7 @@ public class GatewayConfig {
                                 .filters(gatewayFilterSpec -> gatewayFilterSpec
                                         .filter(jwtAuthorizationFilter)
                                 )
-                                .uri("lib://shortpingoo-backend-order-svc")
+                                .uri("lb://shortpingoo-backend-order-svc")
                         )
 
                         // 상품 별 재고 수정
