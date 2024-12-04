@@ -232,10 +232,7 @@ public class GatewayConfig {
 
                 // 상품 별 재고 수정
                 .route("product-stock", predicateSpec -> predicateSpec
-                        .path("/api/brand/product/stock/{productCode}")
-                        .filters(gatewayFilterSpec -> gatewayFilterSpec
-                                .filter(jwtAuthorizationFilter)
-                        )
+                        .path("/open-api/brand/product/stock/{productCode}")
                         .uri("lb://BRAND")
                 )
 
