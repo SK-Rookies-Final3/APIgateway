@@ -43,7 +43,7 @@ public class GatewayConfig {
 
                 // Users - exit
                 .route("users-exit", predicateSpec -> predicateSpec
-                        .path("/api/user")
+                        .path("/api/user/exit/{id}")
                         .uri("lb://USERS")
                 )
 
