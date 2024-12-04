@@ -307,28 +307,28 @@ public class GatewayConfig {
                 )
 
                 // 위시리스트 관련 라우트, JWT 인증 필터 적용
-                .route("custom-cart-item-by-productCode", predicateSpec -> predicateSpec
+                .route("wish-product", predicateSpec -> predicateSpec
                         .path("/api/wishlist/products")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
                         .uri("lb://WISHLISHT")
                 )
-                .route("custom-cart-item-by-productCode", predicateSpec -> predicateSpec
+                .route("wish-shorts", predicateSpec -> predicateSpec
                         .path("/api/wishlist/shorts")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
                         .uri("lb://WISHLISHT")
                 )
-                .route("custom-cart-item-by-productCode", predicateSpec -> predicateSpec
+                .route("wish-product-Delete", predicateSpec -> predicateSpec
                         .path("/api/wishlist/products/{productCode}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
                         .uri("lb://WISHLISHT")
                 )
-                .route("custom-cart-item-by-productCode", predicateSpec -> predicateSpec
+                .route("wish-shorts-Delete", predicateSpec -> predicateSpec
                         .path("/api/wishlist/shorts/{shortsCode}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
