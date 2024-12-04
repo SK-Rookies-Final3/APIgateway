@@ -52,45 +52,34 @@ public class JwtAuthorizationFilter implements GatewayFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        String requestPath = exchange.getRequest().getURI().getPath();
-        log.debug("Request Path: {}", requestPath);
-
-        // 특정 경로 제외 처리
-        if (requestPath.startsWith("/api/brand/product/owner")) {
-            log.debug("Excluding path from JWT filter: {}", requestPath);
-            return chain.filter(exchange); // 필터를 건너뜀
-        }
-
         try {
-            // 나머지 경로에 대해 기존 로직 실행
-            List<String> authorizations = getAuthorizations(exchange);
+            List<String> authorizations = getAuthorizations(exchange);  // Authorization 헤더 추출
+
             if (isAuthorizationHeaderMissing(authorizations)) {
                 return sendErrorResponse(exchange, ERROR_NO_AUTH, new NotExistsAuthorization());
             }
 
-            String jwtToken = parseAuthorizationToken(authorizations.get(0));
+            String jwtToken = parseAuthorizationToken(authorizations.get(0));  // Bearer 토큰 추출
             Claims claims = parseAndValidateJwt(jwtToken);
 
-            String userId = claims.get("id").toString();
-            if (userId == null || userId.isEmpty()) {
-                throw new UnauthorizedAccessException("Invalid User ID in JWT");
-            }
 
-            // 수정된 요청에 사용자 정보를 추가
+            // JWT에서 사용자 ID 추출 후 int로 변환
+            String userId = claims.get("id").toString(); // User ID를 int로 변환
+
             ServerHttpRequest modifiedRequest = new ServerHttpRequestDecorator(exchange.getRequest()) {
                 @Override
                 public HttpHeaders getHeaders() {
                     HttpHeaders httpHeaders = new HttpHeaders();
-                    httpHeaders.add("X-User-Id", userId);
+                    httpHeaders.add("X-User-Id", String.valueOf(userId));
                     httpHeaders.putAll(super.getHeaders());
                     return httpHeaders;
                 }
             };
 
-            log.debug("JWT validated successfully for user ID: {}", userId);
+            log.debug("Request URI to Eureka Server: " + exchange.getRequest().getURI());
+            // 수정된 요청을 새로운 ServerWebExchange로 설정
             return chain.filter(exchange.mutate().request(modifiedRequest).build());
         } catch (Exception e) {
-            log.error("JWT validation error", e);
             return sendErrorResponse(exchange, getErrorCode(e), e);
         }
     }
