@@ -272,7 +272,7 @@ public class GatewayConfig {
                 )
 
                 .route("cart-item-by-productCode", predicateSpec -> predicateSpec
-                        .path("/api/cart/items/{productCode}")
+                        .path("/api/cart/items/{itemCode}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
@@ -280,7 +280,14 @@ public class GatewayConfig {
                 )
 
                 .route("custom-cart-items", predicateSpec -> predicateSpec
-                        .path("/api/cart/custom/items")
+                        .path("/api/cart/custom")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://CART")
+                )
+                .route("custom-cart-items", predicateSpec -> predicateSpec
+                        .path("/api/cart/custom/item)
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
@@ -296,7 +303,7 @@ public class GatewayConfig {
                 )
 
                 .route("custom-cart-item-by-productCode", predicateSpec -> predicateSpec
-                        .path("/api/cart/custom/items/{productCode}")
+                        .path("/api/cart/custom/item/{itemCode}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
