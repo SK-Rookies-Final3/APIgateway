@@ -287,7 +287,7 @@ public class GatewayConfig {
                         .uri("lb://CART")
                 )
                 .route("custom-cart-items", predicateSpec -> predicateSpec
-                        .path("/api/cart/custom/item)
+                        .path("/api/cart/custom/item")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
