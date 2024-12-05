@@ -56,7 +56,7 @@ public class JwtAuthorizationFilter implements GatewayFilter {
             List<String> authorizations = getAuthorizations(exchange);  // Authorization 헤더 추출
 
             for(int i=0; i < authorizations.size(); i++) {
-                log.debug("////getAuthorizations::///");
+                log.debug("///////getAuthorizations:://///");
                 log.debug(authorizations.get(i));
             }
 
@@ -64,12 +64,16 @@ public class JwtAuthorizationFilter implements GatewayFilter {
                 return sendErrorResponse(exchange, ERROR_NO_AUTH, new NotExistsAuthorization());
             }
 
+            log.debug("///////isAuthorizationHeaderMissing start /////");
             String jwtToken = parseAuthorizationToken(authorizations.get(0));  // Bearer 토큰 추출
+            log.debug("///////isAuthorizationHeaderMissing start //"+jwtToken);
             Claims claims = parseAndValidateJwt(jwtToken);
 
-
+            log.debug("///////claims end //");
             // JWT에서 사용자 ID 추출 후 int로 변환
             String userId = claims.get("id").toString(); // User ID를 int로 변환
+
+            log.debug("///////userId start //"+userId);
 
             ServerHttpRequest modifiedRequest = new ServerHttpRequestDecorator(exchange.getRequest()) {
                 @Override
@@ -140,7 +144,7 @@ public class JwtAuthorizationFilter implements GatewayFilter {
     private List<String> getAuthorizations(ServerWebExchange exchange) {
         ServerHttpRequest request = exchange.getRequest();
         log.debug("////getAuthorizations::///");
-        log.debug(request.toString());
+        log.debug(request.getHeaders().toString());
         return request.getHeaders().getOrDefault(HttpHeaders.AUTHORIZATION, List.of());
     }
 
