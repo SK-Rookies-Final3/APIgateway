@@ -88,7 +88,7 @@ public class GatewayConfig {
 
                 // Brand - store 전체 조회
                 .route("store", predicateSpec -> predicateSpec
-                        .path("/open-api/brand/store/")
+                        .path("/open-api/brand/store")
                         .uri("lb://BRAND")
                 )
 
