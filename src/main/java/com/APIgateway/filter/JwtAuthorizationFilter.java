@@ -55,6 +55,11 @@ public class JwtAuthorizationFilter implements GatewayFilter {
         try {
             List<String> authorizations = getAuthorizations(exchange);  // Authorization 헤더 추출
 
+            for(int i=0; i < authorizations.size(); i++) {
+                log.debug("////getAuthorizations::///");
+                log.debug(authorizations.get(i));
+            }
+
             if (isAuthorizationHeaderMissing(authorizations)) {
                 return sendErrorResponse(exchange, ERROR_NO_AUTH, new NotExistsAuthorization());
             }
@@ -134,6 +139,8 @@ public class JwtAuthorizationFilter implements GatewayFilter {
 
     private List<String> getAuthorizations(ServerWebExchange exchange) {
         ServerHttpRequest request = exchange.getRequest();
+        log.debug("////getAuthorizations::///");
+        log.debug(request.toString());
         return request.getHeaders().getOrDefault(HttpHeaders.AUTHORIZATION, List.of());
     }
 
