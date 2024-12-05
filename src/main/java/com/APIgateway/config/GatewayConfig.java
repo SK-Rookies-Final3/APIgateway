@@ -146,7 +146,7 @@ public class GatewayConfig {
 
                 // Brand - product 전체 조회
                 .route("product", predicateSpec -> predicateSpec
-                        .path("/open-api/brand/product/")
+                        .path("/open-api/brand/product")
                         .uri("lb://BRAND")
                 )
 
@@ -174,6 +174,12 @@ public class GatewayConfig {
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
+                        .uri("lb://BRAND")
+                )
+
+                // 사용자(owner) 본인의 가게의 상품 상세 조회 - order에서 사용!
+                .route("product-ownerRest", predicateSpec -> predicateSpec
+                        .path("/api/brand/product/ownerRest")
                         .uri("lb://BRAND")
                 )
 
