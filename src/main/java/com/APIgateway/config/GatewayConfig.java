@@ -177,6 +177,12 @@ public class GatewayConfig {
                                 .uri("lb://shortpingoo-backend-brand-svc")
                         )
 
+                        // 사용자(owner) 본인의 가게의 상품 상세 조회
+                        .route("product-owner", predicateSpec -> predicateSpec
+                                .path("/api/brand/product/ownerRest")
+                                .uri("lb://shortpingoo-backend-brand-svc")
+                        )
+
 
                         // Brand - review 조회
                         .route("review-{productCode}", predicateSpec -> predicateSpec
