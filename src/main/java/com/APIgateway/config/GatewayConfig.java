@@ -227,6 +227,15 @@ public class GatewayConfig {
                         .uri("lb://ORDER")
                 )
 
+                // order - 주문 상태 수정
+                .route("order-owner-status", predicateSpec -> predicateSpec
+                        .path("/api/order/owner/{orderCode}/status")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://ORDER")
+                )
+
                 // order - 사용자(owner)별 가게의 전체 주문 내역 조회
                 .route("order-owner", predicateSpec -> predicateSpec
                         .path("/api/order/owner")
