@@ -183,6 +183,12 @@ public class GatewayConfig {
                         .uri("lb://BRAND")
                 )
 
+                // 사용자(owner) 본인의 가게의 상품 상세 조회 - order에서 사용!
+                .route("product-{productCode}-shorts", predicateSpec -> predicateSpec
+                        .path("/open-api/brand/product/{productCode}/shorts")
+                        .uri("lb://BRAND")
+                )
+
 
                 // Brand - review 조회
                 .route("review-{productCode}", predicateSpec -> predicateSpec
