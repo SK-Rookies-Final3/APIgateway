@@ -233,7 +233,7 @@ public class GatewayConfig {
                                 .filters(gatewayFilterSpec -> gatewayFilterSpec
                                         .filter(jwtAuthorizationFilter)
                                 )
-                                .uri("lb://ORDER")
+                                .uri("lb://shortpingoo-backend-order-svc")
                         )
 
                         // order - 사용자(owner)별 가게의 전체 주문 내역 조회
