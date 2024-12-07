@@ -28,6 +28,9 @@ spring:
         locator:
           enabled: true
     gateway:
+      httpclient:
+        connect-timeout: 3600
+        response-timeout: 3600s
       globalcors:
         corsConfigurations:
           '[/**]':
