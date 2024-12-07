@@ -283,7 +283,7 @@ public class GatewayConfig {
                        )
 
                        .route("cart-item-by-productCode", predicateSpec -> predicateSpec
-                               .path("/api/cart/items/{productCode}")
+                               .path("/api/cart/items/{itemCode}")
                                .filters(gatewayFilterSpec -> gatewayFilterSpec
                                        .filter(jwtAuthorizationFilter)
                                )
@@ -299,7 +299,7 @@ public class GatewayConfig {
                         )
 
                        .route("custom-cart-items", predicateSpec -> predicateSpec
-                               .path("/api/cart/custom/items")
+                               .path("/api/cart/custom/item")
                                .filters(gatewayFilterSpec -> gatewayFilterSpec
                                        .filter(jwtAuthorizationFilter)
                                )
@@ -313,14 +313,16 @@ public class GatewayConfig {
                                )
                                .uri("lb://shortpingoo-backend-cart-svc")
                        )
+                        
 
                        .route("custom-cart-item-by-productCode", predicateSpec -> predicateSpec
-                               .path("/api/cart/custom/items/{productCode}")
-                               .filters(gatewayFilterSpec -> gatewayFilterSpec
-                                       .filter(jwtAuthorizationFilter)
-                               )
-                               .uri("lb://shortpingoo-backend-cart-svc")
-                       )
+                                .path("/api/cart/custom/item/{itemCode}")
+                                .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                        .filter(jwtAuthorizationFilter)
+                                )
+                                .uri("lb://shortpingoo-backend-cart-svc")
+                        )
+                       
 //
 //                        // 위시리스트 관련 라우트, JWT 인증 필터 적용
 //                        .route("wish-product", predicateSpec -> predicateSpec
