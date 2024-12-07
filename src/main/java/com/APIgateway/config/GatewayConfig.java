@@ -265,6 +265,12 @@ public class GatewayConfig {
                                 .uri("lb://shortpingoo-ai-flask-svc")
                         )
 
+                        // Brand-AI - 쇼츠 조회
+                        .route("shorts-get", predicateSpec -> predicateSpec
+                                .path("/open-api/brand/product/${productCode}/shorts")
+                                .uri("lb://shortpingoo-backend-brand-svc")
+                        )
+
                         // 로컬 이미지 파일 접근
                         .route("image-access", predicateSpec -> predicateSpec
                                 .path("/uploads/**")
