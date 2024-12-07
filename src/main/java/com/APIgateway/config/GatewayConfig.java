@@ -267,7 +267,7 @@ public class GatewayConfig {
 
                         // Brand-AI - 쇼츠 조회
                         .route("shorts-get", predicateSpec -> predicateSpec
-                                .path("/open-api/brand/product/${productCode}/shorts")
+                                .path("/open-api/brand/product/{productCode}/shorts")
                                 .uri("lb://shortpingoo-backend-brand-svc")
                         )
 
