@@ -282,6 +282,8 @@ public class GatewayConfig {
                         .path("/presigned-url/*")
                         .uri("lb://BRAND")
                 )
+
+
                 // 장바구니 관련 라우트, JWT 인증 필터 적용
 
                 .route("cart-items", predicateSpec -> predicateSpec
@@ -291,7 +293,7 @@ public class GatewayConfig {
                         )
                         .uri("lb://CART")
                 )
-
+                // 장바구니에서 항목 제거하기
                 .route("cart-item-by-productCode", predicateSpec -> predicateSpec
                         .path("/api/cart/items/{itemCode}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
@@ -299,7 +301,7 @@ public class GatewayConfig {
                         )
                         .uri("lb://CART")
                 )
-
+                // 커스텀 장바구니 생성 &항목 목록 가져오기
                 .route("custom-cart-items", predicateSpec -> predicateSpec
                         .path("/api/cart/custom")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
@@ -307,6 +309,7 @@ public class GatewayConfig {
                         )
                         .uri("lb://CART")
                 )
+                //커스텀 장바구니에 항목 추가하기
                 .route("custom-cart-items", predicateSpec -> predicateSpec
                         .path("/api/cart/custom/item")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
@@ -314,7 +317,7 @@ public class GatewayConfig {
                         )
                         .uri("lb://CART")
                 )
-
+                //커스텀 장바구니 제목 수정하기
                 .route("update-cart-title", predicateSpec -> predicateSpec
                         .path("/api/cart/custom/updateTitle")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
@@ -322,9 +325,9 @@ public class GatewayConfig {
                         )
                         .uri("lb://CART")
                 )
-
+                // 커스텀 장바구니 삭제하기
                 .route("custom-cart-item-by-productCode", predicateSpec -> predicateSpec
-                        .path("/api/cart/custom/item/{itemCode}")
+                        .path("/api/cart/custom/{tabid}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
