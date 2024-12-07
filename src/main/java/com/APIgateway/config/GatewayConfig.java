@@ -270,7 +270,7 @@ public class GatewayConfig {
                                .filters(gatewayFilterSpec -> gatewayFilterSpec
                                        .filter(jwtAuthorizationFilter)
                                )
-                               .uri("lb://CART")
+                               .uri("lb://shortpingoo-backend-cart-svc")
                        )
 
                        .route("cart-item-by-productCode", predicateSpec -> predicateSpec
@@ -278,7 +278,7 @@ public class GatewayConfig {
                                .filters(gatewayFilterSpec -> gatewayFilterSpec
                                        .filter(jwtAuthorizationFilter)
                                )
-                               .uri("lb://CART")
+                               .uri("lb://shortpingoo-backend-cart-svc")
                        )
 
                        .route("custom-cart-items", predicateSpec -> predicateSpec
@@ -286,7 +286,7 @@ public class GatewayConfig {
                                .filters(gatewayFilterSpec -> gatewayFilterSpec
                                        .filter(jwtAuthorizationFilter)
                                )
-                               .uri("lb://CART")
+                               .uri("lb://shortpingoo-backend-cart-svc")
                        )
 
                        .route("update-cart-title", predicateSpec -> predicateSpec
@@ -294,7 +294,7 @@ public class GatewayConfig {
                                .filters(gatewayFilterSpec -> gatewayFilterSpec
                                        .filter(jwtAuthorizationFilter)
                                )
-                               .uri("lb://CART")
+                               .uri("lb://shortpingoo-backend-cart-svc")
                        )
 
                        .route("custom-cart-item-by-productCode", predicateSpec -> predicateSpec
@@ -302,7 +302,7 @@ public class GatewayConfig {
                                .filters(gatewayFilterSpec -> gatewayFilterSpec
                                        .filter(jwtAuthorizationFilter)
                                )
-                               .uri("lb://CART")
+                               .uri("lb://shortpingoo-backend-cart-svc")
                        )
 //
 //                        // 위시리스트 관련 라우트, JWT 인증 필터 적용
