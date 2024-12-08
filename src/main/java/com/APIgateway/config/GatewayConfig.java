@@ -295,7 +295,7 @@ public class GatewayConfig {
                 )
                 // 장바구니에서 항목 제거하기
                 .route("cart-item-by-productCode", predicateSpec -> predicateSpec
-                        .path("/api/cart/items/{itemCode}")
+                        .path("/api/cart/items/{id}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
@@ -319,7 +319,7 @@ public class GatewayConfig {
                 )
                 //커스텀 장바구니 제목 수정하기
                 .route("update-cart-title", predicateSpec -> predicateSpec
-                        .path("/api/cart/custom/updateTitle")
+                        .path("/api/cart/{customCartId}/Title")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
@@ -333,8 +333,17 @@ public class GatewayConfig {
                         )
                         .uri("lb://CART")
                 )
+                // 장바구니 수량만 증가
+                .route("custom-cart-item-quantity", predicateSpec -> predicateSpec
+                        .path("/api/cart/items/increase/{id}")
+                        .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                .filter(jwtAuthorizationFilter)
+                        )
+                        .uri("lb://CART")
+                )
 
                 // 위시리스트 관련 라우트, JWT 인증 필터 적용
+                // 상품 위시리스트 조회, 항목 추가
                 .route("wish-product", predicateSpec -> predicateSpec
                         .path("/api/wishlist/products")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
@@ -342,6 +351,7 @@ public class GatewayConfig {
                         )
                         .uri("lb://WISHLISHT")
                 )
+                // 숏츠 위시리스트 조회, 항목 추가
                 .route("wish-shorts", predicateSpec -> predicateSpec
                         .path("/api/wishlist/shorts")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
@@ -349,15 +359,17 @@ public class GatewayConfig {
                         )
                         .uri("lb://WISHLISHT")
                 )
+                // 상품 위시리스트에서 항목 삭제하기
                 .route("wish-product-Delete", predicateSpec -> predicateSpec
-                        .path("/api/wishlist/products/{productCode}")
+                        .path("/api/wishlist/products/{id}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
                         .uri("lb://WISHLISHT")
                 )
+                // 숏츠 위시리스트에서 항목 삭제하기
                 .route("wish-shorts-Delete", predicateSpec -> predicateSpec
-                        .path("/api/wishlist/shorts/{shortsCode}")
+                        .path("/api/wishlist/shorts/{id}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
