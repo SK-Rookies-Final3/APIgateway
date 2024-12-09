@@ -333,7 +333,7 @@ public class GatewayConfig {
                         )
                         .uri("lb://CART")
                 )
-                // 장바구니 수량만 증가
+                // 장바구니 수량 변경
                 .route("custom-cart-item-quantity", predicateSpec -> predicateSpec
                         .path("/api/cart/items/increase/{id}")
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
@@ -349,7 +349,7 @@ public class GatewayConfig {
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
-                        .uri("lb://WISHLISHT")
+                        .uri("lb://WISHLIST")
                 )
                 // 숏츠 위시리스트 조회, 항목 추가
                 .route("wish-shorts", predicateSpec -> predicateSpec
@@ -357,7 +357,7 @@ public class GatewayConfig {
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
-                        .uri("lb://WISHLISHT")
+                        .uri("lb://WISHLIST")
                 )
                 // 상품 위시리스트에서 항목 삭제하기
                 .route("wish-product-Delete", predicateSpec -> predicateSpec
@@ -365,7 +365,7 @@ public class GatewayConfig {
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
-                        .uri("lb://WISHLISHT")
+                        .uri("lb://WISHLIST")
                 )
                 // 숏츠 위시리스트에서 항목 삭제하기
                 .route("wish-shorts-Delete", predicateSpec -> predicateSpec
@@ -373,7 +373,7 @@ public class GatewayConfig {
                         .filters(gatewayFilterSpec -> gatewayFilterSpec
                                 .filter(jwtAuthorizationFilter)
                         )
-                        .uri("lb://WISHLISHT")
+                        .uri("lb://WISHLIST")
                 )
 
 
