@@ -329,36 +329,36 @@ public class GatewayConfig {
                                 .uri("lb://shortpingoo-backend-cart-svc")
                         )
                        
-//
-//                        // 위시리스트 관련 라우트, JWT 인증 필터 적용
-//                        .route("wish-product", predicateSpec -> predicateSpec
-//                                .path("/api/wishlist/products")
-//                                .filters(gatewayFilterSpec -> gatewayFilterSpec
-//                                        .filter(jwtAuthorizationFilter)
-//                                )
-//                                .uri("lb://WISHLISHT")
-//                        )
-//                        .route("wish-shorts", predicateSpec -> predicateSpec
-//                                .path("/api/wishlist/shorts")
-//                                .filters(gatewayFilterSpec -> gatewayFilterSpec
-//                                        .filter(jwtAuthorizationFilter)
-//                                )
-//                                .uri("lb://WISHLISHT")
-//                        )
-//                        .route("wish-product-Delete", predicateSpec -> predicateSpec
-//                                .path("/api/wishlist/products/{productCode}")
-//                                .filters(gatewayFilterSpec -> gatewayFilterSpec
-//                                        .filter(jwtAuthorizationFilter)
-//                                )
-//                                .uri("lb://WISHLISHT")
-//                        )
-//                        .route("wish-shorts-Delete", predicateSpec -> predicateSpec
-//                                .path("/api/wishlist/shorts/{shortsCode}")
-//                                .filters(gatewayFilterSpec -> gatewayFilterSpec
-//                                        .filter(jwtAuthorizationFilter)
-//                                )
-//                                .uri("lb://WISHLISHT")
-//                        )
+
+                       // 위시리스트 관련 라우트, JWT 인증 필터 적용
+                       .route("wish-product", predicateSpec -> predicateSpec
+                               .path("/api/wishlist/products")
+                               .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                       .filter(jwtAuthorizationFilter)
+                               )
+                               .uri("lb://shortpingoo-backend-wishlist-svc")
+                       )
+                       .route("wish-shorts", predicateSpec -> predicateSpec
+                               .path("/api/wishlist/shorts")
+                               .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                       .filter(jwtAuthorizationFilter)
+                               )
+                               .uri("lb://shortpingoo-backend-wishlist-svc")
+                       )
+                       .route("wish-product-Delete", predicateSpec -> predicateSpec
+                               .path("/api/wishlist/products/{productCode}")
+                               .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                       .filter(jwtAuthorizationFilter)
+                               )
+                               .uri("lb://shortpingoo-backend-wishlist-svc")
+                       )
+                       .route("wish-shorts-Delete", predicateSpec -> predicateSpec
+                               .path("/api/wishlist/shorts/{shortsCode}")
+                               .filters(gatewayFilterSpec -> gatewayFilterSpec
+                                       .filter(jwtAuthorizationFilter)
+                               )
+                               .uri("lb://shortpingoo-backend-wishlist-svc")
+                       )
 
 
                         // Swagger UI 라우팅
